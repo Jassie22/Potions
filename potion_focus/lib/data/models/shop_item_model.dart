@@ -16,6 +16,7 @@ class ShopItemModel {
   late int coinCost;
   late String currencyType; // 'essence', 'coins', 'both'
   late String rarity;
+  late String description;
   late bool purchased;
   DateTime? purchasedAt;
 
@@ -28,6 +29,7 @@ class ShopItemModel {
     this.coinCost = 0,
     this.currencyType = 'essence',
     this.rarity = 'common',
+    this.description = '',
     this.purchased = false,
     this.purchasedAt,
   });

@@ -14,6 +14,7 @@ class QuestModel {
   late int currentProgress;
   late String status; // active, completed, expired
   late int essenceReward;
+  late bool isCustom;
   late DateTime generatedAt;
   late DateTime expiresAt;
   DateTime? completedAt;
@@ -27,6 +28,7 @@ class QuestModel {
     this.currentProgress = 0,
     this.status = 'active',
     this.essenceReward = 0,
+    this.isCustom = false,
     required DateTime generatedAt,
     required DateTime expiresAt,
     this.completedAt,

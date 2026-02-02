@@ -4,7 +4,6 @@ import 'package:potion_focus/data/local/isar_helpers.dart';
 import 'package:potion_focus/data/models/recipe_model.dart';
 import 'package:potion_focus/data/models/potion_model.dart';
 import 'package:potion_focus/data/models/session_model.dart';
-import 'package:potion_focus/data/models/tag_stats_model.dart';
 import 'package:potion_focus/data/models/user_data_model.dart';
 import 'dart:convert';
 
@@ -12,7 +11,6 @@ class RecipeService {
   Future<void> checkRecipeUnlocks() async {
     final db = DatabaseHelper.instance;
 
-    // Get all locked recipes
     final allRecipes = await db.recipeModels.getAllItems();
     final lockedRecipes = allRecipes.where((r) => !r.unlocked).toList();
 
@@ -27,101 +25,97 @@ class RecipeService {
         await db.writeTxn(() async {
           await db.recipeModels.put(recipe);
         });
-
-        // TODO: Show unlock celebration notification
       }
     }
   }
 
   Future<bool> _checkUnlockCondition(Map<String, dynamic> condition) async {
     final type = condition['type'] as String;
+    final db = DatabaseHelper.instance;
 
     switch (type) {
       case 'potion_count':
-        return await _checkPotionCount(condition['value'] as int);
+        final required = condition['value'] as int;
+        final count = await db.potionModels.count();
+        return count >= required;
 
-      case 'tag_time':
-        return await _checkTagTime(
-          condition['tag'] as String,
-          condition['minutes'] as int,
-        );
+      case 'total_time':
+        final required = condition['minutes'] as int;
+        final allUserData = await db.userDataModels.getAllItems();
+        final userData = allUserData.firstOrNull;
+        return userData != null && userData.totalFocusMinutes >= required;
 
       case 'streak':
-        return await _checkStreak(condition['days'] as int);
+        final required = condition['days'] as int;
+        final allUserData = await db.userDataModels.getAllItems();
+        final userData = allUserData.firstOrNull;
+        return userData != null && userData.streakDays >= required;
 
       case 'rarity_count':
-        return await _checkRarityCount(
-          condition['rarity'] as String,
-          condition['count'] as int,
+        final rarity = condition['rarity'] as String;
+        final required = condition['count'] as int;
+        final allPotions = await db.potionModels.getAllItems();
+        final count = allPotions.where((p) => p.rarity == rarity).length;
+        return count >= required;
+
+      case 'session_duration':
+        final required = condition['minutes'] as int;
+        final allSessions = await db.sessionModels.getAllItems();
+        return allSessions.any(
+          (s) => s.completed && s.durationSeconds >= required * 60,
         );
 
       case 'time_of_day':
-        return await _checkTimeOfDay(
-          condition['after'] as String,
-          condition['sessions'] as int,
-        );
+        return _checkTimeOfDay(condition, db);
 
-      case 'total_time':
-        return await _checkTotalTime(condition['minutes'] as int);
+      case 'compound':
+        final conditions = condition['conditions'] as List<dynamic>;
+        for (final sub in conditions) {
+          final met = await _checkUnlockCondition(sub as Map<String, dynamic>);
+          if (!met) return false;
+        }
+        return true;
 
       default:
         return false;
     }
   }
 
-  Future<bool> _checkPotionCount(int required) async {
-    final db = DatabaseHelper.instance;
-    final count = await db.potionModels.count();
-    return count >= required;
-  }
+  Future<bool> _checkTimeOfDay(Map<String, dynamic> condition, dynamic db) async {
+    final afterStr = condition['after'] as String;
+    final required = condition['sessions'] as int;
+    final afterParts = afterStr.split(':');
+    final afterHour = int.parse(afterParts[0]);
+    final afterMinute = afterParts.length > 1 ? int.parse(afterParts[1]) : 0;
 
-  Future<bool> _checkTagTime(String tag, int requiredMinutes) async {
-    final db = DatabaseHelper.instance;
-    final allTags = await db.tagStatsModels.getAllItems();
-    final tagStats = allTags.where((t) => t.tag == tag).firstOrNull;
-
-    return tagStats != null && tagStats.totalMinutes >= requiredMinutes;
-  }
-
-  Future<bool> _checkStreak(int requiredDays) async {
-    final db = DatabaseHelper.instance;
-    final allUserData = await db.userDataModels.getAllItems();
-    final userData = allUserData.firstOrNull;
-
-    return userData != null && userData.streakDays >= requiredDays;
-  }
-
-  Future<bool> _checkRarityCount(String rarity, int required) async {
-    final db = DatabaseHelper.instance;
-    final allPotions = await db.potionModels.getAllItems();
-    final matchingPotions = allPotions.where((p) => p.rarity == rarity).toList();
-    final count = matchingPotions.length;
-
-    return count >= required;
-  }
-
-  Future<bool> _checkTimeOfDay(String afterTime, int requiredSessions) async {
-    final db = DatabaseHelper.instance;
-    
-    // Parse time (e.g., "22:00")
-    final timeParts = afterTime.split(':');
-    final hour = int.parse(timeParts[0]);
-
-    // Count sessions started after this time
     final allSessions = await db.sessionModels.getAllItems();
-    final nightSessions = allSessions.where((session) {
-      return session.startedAt.hour >= hour && session.completed;
+
+    final count = allSessions.where((session) {
+      if (!session.completed) return false;
+      // Use local time for time_of_day checks
+      final localTime = session.startedAt.toLocal();
+      final sessionMinutes = localTime.hour * 60 + localTime.minute;
+      final afterMinutes = afterHour * 60 + afterMinute;
+
+      if (condition.containsKey('before')) {
+        final beforeStr = condition['before'] as String;
+        final beforeParts = beforeStr.split(':');
+        final beforeHour = int.parse(beforeParts[0]);
+        final beforeMinute = beforeParts.length > 1 ? int.parse(beforeParts[1]) : 0;
+        final beforeMinutes = beforeHour * 60 + beforeMinute;
+
+        if (afterMinutes < beforeMinutes) {
+          // Normal range (e.g., 05:00-07:00)
+          return sessionMinutes >= afterMinutes && sessionMinutes < beforeMinutes;
+        } else {
+          // Overnight range (e.g., 23:00-03:00)
+          return sessionMinutes >= afterMinutes || sessionMinutes < beforeMinutes;
+        }
+      }
+      return sessionMinutes >= afterMinutes;
     }).length;
 
-    return nightSessions >= requiredSessions;
-  }
-
-  Future<bool> _checkTotalTime(int requiredMinutes) async {
-    final db = DatabaseHelper.instance;
-    final allUserData = await db.userDataModels.getAllItems();
-    final userData = allUserData.firstOrNull;
-
-    return userData != null && userData.totalFocusMinutes >= requiredMinutes;
+    return count >= required;
   }
 
   Future<List<RecipeModel>> getAllRecipes() async {
@@ -147,16 +141,25 @@ class RecipeService {
     switch (type) {
       case 'potion_count':
         return 'Brew ${condition['value']} potions';
-      case 'tag_time':
-        return 'Focus ${condition['minutes']} minutes with #${condition['tag']}';
       case 'streak':
-        return 'Maintain a ${condition['days']} day focus streak';
+        return 'Maintain a ${condition['days']}-day focus streak';
       case 'rarity_count':
         return 'Brew ${condition['count']} ${condition['rarity']} potions';
       case 'time_of_day':
-        return 'Complete ${condition['sessions']} sessions after ${condition['after']}';
+        final after = condition['after'];
+        final sessions = condition['sessions'];
+        if (condition.containsKey('before')) {
+          return 'Complete $sessions sessions between $after and ${condition['before']}';
+        }
+        return 'Complete $sessions sessions after $after';
       case 'total_time':
         return 'Accumulate ${condition['minutes']} total focus minutes';
+      case 'session_duration':
+        return 'Complete a ${condition['minutes']}-minute session';
+      case 'compound':
+        final conditions = condition['conditions'] as List<dynamic>;
+        final hints = conditions.map((c) => getRecipeHint(c as Map<String, dynamic>)).toList();
+        return hints.join(' and ');
       default:
         return 'Complete a special challenge';
     }
@@ -194,11 +197,9 @@ final recipesByRarityProvider = FutureProvider<List<RecipeModel>>((ref) async {
     final rarityA = rarityOrder.indexOf(a.rarity);
     final rarityB = rarityOrder.indexOf(b.rarity);
     if (rarityA != rarityB) return rarityA.compareTo(rarityB);
-    // Unlocked first within same rarity
     if (a.unlocked != b.unlocked) return a.unlocked ? -1 : 1;
     return 0;
   });
 
   return all;
 });
-

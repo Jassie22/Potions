@@ -132,6 +132,33 @@ Avoid overengineering. Avoid vibes-only logic.
 
 ---
 
+## Visual System Rules
+
+* All bottles, effects, and backgrounds are **CustomPaint only** -- no image assets for game content.
+* Potion appearance is stored as a JSON `visualConfig` on `PotionModel`. See `Documentation/VISUAL_SYSTEM.md`.
+* Rarity drives default visuals: rarity determines bottle shape, effect overlay, and glow intensity.
+* `fillPercent` is derived from timer state (`1 - remaining/total`), never persisted.
+* Liquid is clipped to the bottle body path -- shapes are defined in `bottle_shapes.dart`.
+
+## Monetization Rules
+
+* **Core loop is fully free.** Coins buy cosmetic extras only.
+* Two currencies: **Essence** (earned by focusing) and **Coins** (premium/IAP).
+* Currencies must never be interchangeable.
+* Shop items declare their `currencyType` (`'essence'`, `'coins'`, or `'both'`).
+* Subscription tiers are additive -- they unlock extras, never remove existing features.
+* See `Documentation/MONETIZATION.md` for pricing and tier details.
+
+## Unlock System Rules
+
+* Two parallel systems: **Recipes** (individual cosmetics) and **Unlockable Styles** (preset combos).
+* Unlock conditions are JSON-defined, evaluated by services after each session.
+* Supported condition types: `potion_count`, `total_time`, `streak`, `tag_mastery`, `rarity_collection`, `session_duration`, `time_of_day`.
+* New condition types require adding evaluation logic to both `RecipeService` and `UnlockService`.
+* Unlocks must be **one-way** -- once unlocked, never re-locked.
+
+---
+
 ## Workflow Rules
 
 ### Commits

@@ -1,0 +1,130 @@
+Offline First:
+
+The app must function fully offline.
+
+Local storage must handle:
+
+• Sessions
+• Potions
+• Essence
+• Tags
+• Recipes
+• Unlocks
+
+Sync happens silently.
+
+Conflict resolution uses latest timestamp.
+
+No manual sync button.
+
+User never thinks about sync.
+
+Data Tables:
+
+Session:
+id
+user_id
+duration
+tags[]
+completed
+timestamp
+
+Potion:
+id
+session_id
+rarity
+essence_earned
+render_url
+created_at
+
+Recipe:
+id
+name
+unlock_condition
+reward_asset
+rarity
+lore
+
+Unlock:
+user_id
+recipe_id
+timestamp
+
+TagStats:
+user_id
+tag
+total_minutes
+
+Friendship:
+user_id
+friend_id
+status
+
+Essence:
+user_id
+balance
+
+Sync Strategy:
+
+Local database is source of truth while offline.
+
+On reconnect:
+
+• Upload new sessions
+• Upload new potions
+• Upload essence changes
+• Upload unlocks
+
+Server returns authoritative merged dataset.
+
+Backend:
+
+Supabase or equivalent relational backend.
+
+Indexes on:
+
+user_id
+timestamp
+tag
+
+All analytics are simple group-by operations.
+
+Scalability:
+
+This architecture supports:
+
+• Millions of users
+• Millions of potions
+• Low query cost
+• Easy caching
+• Cheap storage
+
+Security:
+
+• User data isolated
+• Friend data permission-based
+• No public stats
+• No global leaderboards
+
+Expansion Ready:
+
+This architecture supports:
+
+• Seasonal recipes
+• Limited time events
+• Group focus
+• Story arcs
+• Cross-device sync
+• Exporting user history
+
+Without schema changes.
+
+Final Philosophy:
+
+Potion Focus is not about control.
+
+It is about remembrance.
+
+Every potion is proof that the user tried.
+
+The app exists to make people kinder to their own effort.

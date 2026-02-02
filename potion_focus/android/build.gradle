@@ -1,0 +1,44 @@
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = "../build"
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+    
+    // Set Flutter properties BEFORE evaluation for plugin projects
+    if (project.name != 'app') {
+        project.beforeEvaluate {
+            // Make Flutter properties available to plugins during evaluation
+            if (!project.hasProperty('flutter')) {
+                project.ext.flutter = [
+                    compileSdkVersion: 34,
+                    minSdkVersion: 21,
+                    targetSdkVersion: 34,
+                    versionCode: 1,
+                    versionName: "1.0.0"
+                ]
+            }
+        }
+    }
+    
+    project.afterEvaluate {
+        if (project.hasProperty('android')) {
+            // Set namespace for isar_flutter_libs
+            if (project.name == 'isar_flutter_libs') {
+                try {
+                    project.android.namespace = 'dev.isar.isar_flutter_libs'
+                } catch (Exception e) {
+                    // Ignore
+                }
+            }
+        }
+    }
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}

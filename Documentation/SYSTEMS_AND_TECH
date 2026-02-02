@@ -1,0 +1,196 @@
+Timer System:
+
+Users can start sessions using:
+
+Preset durations: 15, 25, 45, 60, 90 minutes.
+Free-form durations: 10 to 120 minutes.
+
+Both types are fully equal in progression.
+
+Session completion produces:
+
+• A potion
+• Essence
+• Tag statistics
+• Recipe unlock check
+• Rarity roll
+• Rendered asset
+
+Session cancellation produces:
+
+• A Muddy Brew potion
+
+No session is ever discarded.
+
+Tags:
+
+Each session can have multiple tags.
+
+Tags can be default or user-created.
+
+Tags are not just labels — they are behavioural signals.
+
+Tags drive:
+
+• Focus Threads
+• Habit reflection
+• Weekly patterns
+• Adaptive goals
+
+Potion Creation:
+
+Each potion stores:
+
+• Duration
+• Tags
+• Completion state
+• Essence earned
+• Rarity
+• Asset reference
+• Timestamp
+
+Once created, a potion is immutable.
+
+Essence:
+
+Essence is earned proportional to time.
+
+Numbers are deliberately low to avoid grind.
+
+Essence is used only for cosmetics and content.
+
+Essence cannot be bought with money.
+
+Essence exists to reinforce focus, not replace it.
+
+Rarity Logic:
+
+Rarity is calculated from:
+
+• Duration
+• Streak multiplier
+• Recipe context
+• Weighted random roll
+
+Longer sessions increase rarity probability.
+
+Consistency increases rarity probability.
+
+But no session is guaranteed legendary.
+
+Recipes:
+
+Recipes are discoveries, not achievements.
+
+Each recipe:
+
+• Has a behaviour-based unlock condition
+• Has lore
+• Has rarity
+• Unlocks one reward only
+
+Rewards can be:
+
+• Bottle
+• Liquid colour
+• Background
+• Recipe scroll
+
+Recipes are stored in the Grimoire.
+
+Recipes are never hidden behind payment.
+
+Failure Potions:
+
+If a session ends early:
+
+A Muddy Brew potion is created.
+
+Muddy Brews:
+
+• Have unique lore
+• Have unique visual identity
+• Are not counted as streak breakers by default
+• Are part of the story
+
+Focus Threads (Adaptive Goals):
+
+Focus Threads replace quests.
+
+They are generated weekly based on user behaviour.
+
+Generation:
+
+Aggregate last week’s tag totals
+
+Identify top 3 tags
+
+Calculate average durations
+
+Generate goals slightly above previous behaviour
+
+Example:
+
+User studied 6 hours last week →
+Thread: “Spend 6 hours studying this week.”
+
+Threads feel personal.
+
+Threads are never the same between users.
+
+Threads are never mandatory.
+
+Daily Threads:
+
+Small encouragement tasks.
+
+Weekly Threads:
+
+Behaviour-based.
+
+Monthly Threads:
+
+Collection-based.
+
+Friendship System:
+
+Friendship is mutual.
+
+Friends can see limited, optional information.
+
+Friend benefits:
+
+• Shared Essence bonus when both focus same day
+• Shared recipe unlocks
+• Gentle presence indicator
+
+No competition.
+
+No ranking.
+
+No public numbers.
+
+Friend recipes are special.
+
+Friendship is always optional.
+
+Streaks:
+
+Streak only multiplies Essence.
+
+Streak never removes progress.
+
+Breaking streak has no punishment.
+
+Retention Design:
+
+Retention is driven by:
+
+• Collection growth
+• Lore discovery
+• Rarity chase
+• Seasonal content
+• Friendship bonds
+• Emotional memory
+
+Not by obligation.

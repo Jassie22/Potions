@@ -4,6 +4,7 @@ import 'package:potion_focus/core/theme/app_colors.dart';
 import 'package:potion_focus/core/utils/extensions.dart';
 import 'package:potion_focus/data/models/potion_model.dart';
 import 'package:potion_focus/presentation/shared/painting/potion_renderer.dart';
+import 'package:potion_focus/presentation/shared/painting/pixel_gradients.dart';
 
 class PotionGridItem extends StatelessWidget {
   final PotionModel potion;
@@ -22,25 +23,18 @@ class PotionGridItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+        elevation: 0,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
           side: BorderSide(
-            color: rarityColor.withOpacity(0.5),
+            color: Colors.black87,
             width: 2,
           ),
         ),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                rarityColor.withOpacity(0.1),
-                rarityColor.withOpacity(0.05),
-              ],
-            ),
+            borderRadius: BorderRadius.zero,
+            gradient: PixelGradients.twoBand(baseColor: rarityColor),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

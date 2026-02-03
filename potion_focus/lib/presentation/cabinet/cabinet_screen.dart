@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potion_focus/core/theme/app_colors.dart';
+import 'package:potion_focus/data/models/potion_model.dart';
 import 'package:potion_focus/data/repositories/potion_repository.dart';
-import 'package:potion_focus/presentation/cabinet/widgets/potion_grid_item.dart';
 import 'package:potion_focus/presentation/cabinet/widgets/potion_detail_modal.dart';
+import 'package:potion_focus/presentation/cabinet/widgets/shelf_row.dart';
+import 'package:potion_focus/presentation/cabinet/widgets/statistics_screen.dart';
+import 'package:potion_focus/presentation/shared/widgets/pixel_loading.dart';
 
 class CabinetScreen extends ConsumerStatefulWidget {
   const CabinetScreen({super.key});
@@ -13,8 +16,6 @@ class CabinetScreen extends ConsumerStatefulWidget {
 }
 
 class _CabinetScreenState extends ConsumerState<CabinetScreen> {
-  String? _selectedRarityFilter;
-
   @override
   Widget build(BuildContext context) {
     final potionsAsync = ref.watch(allPotionsProvider);
@@ -22,133 +23,90 @@ class _CabinetScreenState extends ConsumerState<CabinetScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Cabinet',
+          'Your Cabinet',
           style: Theme.of(context).textTheme.displaySmall,
         ),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.bar_chart_rounded),
+            tooltip: 'Focus Journey',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const StatisticsScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: potionsAsync.when(
         data: (potions) {
-          // Apply filters
-          final filteredPotions = _selectedRarityFilter != null
-              ? potions.where((p) => p.rarity == _selectedRarityFilter).toList()
-              : potions;
-
           if (potions.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.inventory_2_outlined,
-                    size: 80,
-                    color: Colors.grey[400],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Your Collection is Empty',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Complete focus sessions to brew potions',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey[600],
-                        ),
-                  ),
-                ],
-              ),
-            );
+            return _buildEmptyState(context);
           }
+
+          // Group potions by rarity
+          final groupedPotions = _groupByRarity(potions);
 
           return Column(
             children: [
               // Stats bar
-              Container(
-                padding: const EdgeInsets.all(16),
-                color: Theme.of(context).cardColor,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildStat(
-                      context,
-                      'Total Potions',
-                      potions.length.toString(),
-                      Icons.science,
-                    ),
-                    _buildStat(
-                      context,
-                      'Total Essence',
-                      potions.fold<int>(0, (sum, p) => sum + p.essenceEarned).toString(),
-                      Icons.auto_awesome,
-                    ),
-                  ],
-                ),
-              ),
+              _buildStatsBar(context, potions),
 
-              // Filter chips
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Row(
-                  children: [
-                    FilterChip(
-                      label: const Text('All'),
-                      selected: _selectedRarityFilter == null,
-                      onSelected: (selected) {
-                        setState(() {
-                          _selectedRarityFilter = null;
-                        });
-                      },
-                    ),
-                    const SizedBox(width: 8),
-                    ..._buildRarityFilters(),
-                  ],
-                ),
-              ),
-
-              // Potion grid
+              // Shelves by rarity
               Expanded(
-                child: filteredPotions.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No potions match this filter',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.grey[600],
-                              ),
-                        ),
-                      )
-                    : GridView.builder(
-                        padding: const EdgeInsets.all(16),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                          childAspectRatio: 0.8,
-                        ),
-                        itemCount: filteredPotions.length,
-                        itemBuilder: (context, index) {
-                          final potion = filteredPotions[index];
-                          return PotionGridItem(
-                            potion: potion,
-                            onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                backgroundColor: Colors.transparent,
-                                builder: (context) => PotionDetailModal(potion: potion),
-                              );
-                            },
-                          );
-                        },
+                child: ListView(
+                  children: [
+                    // Display shelves in order: legendary -> epic -> rare -> uncommon -> common -> muddy
+                    if (groupedPotions['legendary']?.isNotEmpty ?? false)
+                      ShelfRow(
+                        rarity: 'legendary',
+                        potions: groupedPotions['legendary']!,
+                        onPotionTap: (potion) => _showPotionDetail(context, potion),
                       ),
+                    if (groupedPotions['epic']?.isNotEmpty ?? false)
+                      ShelfRow(
+                        rarity: 'epic',
+                        potions: groupedPotions['epic']!,
+                        onPotionTap: (potion) => _showPotionDetail(context, potion),
+                      ),
+                    if (groupedPotions['rare']?.isNotEmpty ?? false)
+                      ShelfRow(
+                        rarity: 'rare',
+                        potions: groupedPotions['rare']!,
+                        onPotionTap: (potion) => _showPotionDetail(context, potion),
+                      ),
+                    if (groupedPotions['uncommon']?.isNotEmpty ?? false)
+                      ShelfRow(
+                        rarity: 'uncommon',
+                        potions: groupedPotions['uncommon']!,
+                        onPotionTap: (potion) => _showPotionDetail(context, potion),
+                      ),
+                    if (groupedPotions['common']?.isNotEmpty ?? false)
+                      ShelfRow(
+                        rarity: 'common',
+                        potions: groupedPotions['common']!,
+                        onPotionTap: (potion) => _showPotionDetail(context, potion),
+                      ),
+                    if (groupedPotions['muddy']?.isNotEmpty ?? false)
+                      ShelfRow(
+                        rarity: 'muddy',
+                        potions: groupedPotions['muddy']!,
+                        onPotionTap: (potion) => _showPotionDetail(context, potion),
+                      ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
             ],
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const PixelLoadingIndicator(message: 'Loading collection...'),
         error: (error, stack) => Center(
           child: Text('Error loading potions: $error'),
         ),
@@ -156,46 +114,124 @@ class _CabinetScreenState extends ConsumerState<CabinetScreen> {
     );
   }
 
-  Widget _buildStat(BuildContext context, String label, String value, IconData icon) {
-    return Column(
+  Map<String, List<PotionModel>> _groupByRarity(List<PotionModel> potions) {
+    final grouped = <String, List<PotionModel>>{};
+    for (final potion in potions) {
+      final rarity = potion.rarity.toLowerCase();
+      grouped.putIfAbsent(rarity, () => []);
+      grouped[rarity]!.add(potion);
+    }
+
+    // Sort each group by creation date (newest first)
+    for (final list in grouped.values) {
+      list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    }
+
+    return grouped;
+  }
+
+  void _showPotionDetail(BuildContext context, PotionModel potion) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => PotionDetailModal(potion: potion),
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.inventory_2_outlined,
+            size: 80,
+            color: Colors.grey[400],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Your Cabinet is Empty',
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Complete focus sessions to brew potions',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey[600],
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatsBar(BuildContext context, List<PotionModel> potions) {
+    final totalEssence = potions.fold<int>(0, (sum, p) => sum + p.essenceEarned);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        border: Border.all(color: Colors.black54, width: 2),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildStatItem(
+            context,
+            Icons.science,
+            potions.length.toString(),
+            'Potions',
+            AppColors.primaryLight,
+          ),
+          Container(
+            width: 2,
+            height: 40,
+            color: Colors.black26,
+          ),
+          _buildStatItem(
+            context,
+            Icons.auto_awesome,
+            totalEssence.toString(),
+            'Essence',
+            AppColors.mysticalGold,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem(
+    BuildContext context,
+    IconData icon,
+    String value,
+    String label,
+    Color color,
+  ) {
+    return Row(
       children: [
-        Icon(icon, color: AppColors.primaryLight),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.grey[600],
-              ),
+        Icon(icon, color: color, size: 20),
+        const SizedBox(width: 8),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              value,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: Colors.grey[600],
+                  ),
+            ),
+          ],
         ),
       ],
     );
   }
-
-  List<Widget> _buildRarityFilters() {
-    final rarities = ['common', 'uncommon', 'rare', 'epic', 'legendary', 'muddy'];
-
-    return rarities.map((rarity) {
-      return Padding(
-        padding: const EdgeInsets.only(right: 8),
-        child: FilterChip(
-          label: Text(rarity[0].toUpperCase() + rarity.substring(1)),
-          selected: _selectedRarityFilter == rarity,
-          onSelected: (selected) {
-            setState(() {
-              _selectedRarityFilter = selected ? rarity : null;
-            });
-          },
-          backgroundColor: AppColors.getRarityColor(rarity).withOpacity(0.1),
-          selectedColor: AppColors.getRarityColor(rarity).withOpacity(0.3),
-        ),
-      );
-    }).toList();
-  }
 }
-

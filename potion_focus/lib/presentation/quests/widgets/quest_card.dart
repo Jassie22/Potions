@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:potion_focus/core/theme/app_colors.dart';
 import 'package:potion_focus/core/utils/extensions.dart';
 import 'package:potion_focus/data/models/quest_model.dart';
+import 'package:potion_focus/presentation/shared/painting/pixel_gradients.dart';
 
 class QuestCard extends StatelessWidget {
   final QuestModel quest;
@@ -15,27 +16,26 @@ class QuestCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isCompleted = quest.status == 'completed';
     final progressPercentage = quest.progressPercentage;
+    final questColor = _getQuestColor();
 
     return Card(
-      elevation: isCompleted ? 1 : 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: isCompleted
-            ? BorderSide(color: Colors.green.withOpacity(0.5), width: 2)
-            : BorderSide.none,
+      elevation: 0,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero,
+        side: BorderSide(
+          color: Colors.black87,
+          width: 2,
+        ),
       ),
       child: Container(
-        decoration: isCompleted
-            ? BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.green.withOpacity(0.1),
-                    Colors.green.withOpacity(0.05),
-                  ],
-                ),
-              )
-            : null,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.zero,
+          gradient: PixelGradients.twoBand(
+            baseColor: isCompleted ? Colors.green : questColor,
+            topOpacity: isCompleted ? 0.12 : 0.08,
+            bottomOpacity: isCompleted ? 0.04 : 0.02,
+          ),
+        ),
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,7 +48,7 @@ class QuestCard extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: _getQuestColor().withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.zero,
                   ),
                   child: Icon(
                     _getQuestIcon(),
@@ -121,7 +121,7 @@ class QuestCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.zero,
                   child: LinearProgressIndicator(
                     value: progressPercentage,
                     minHeight: 8,

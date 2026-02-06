@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
 import 'package:potion_focus/data/local/database.dart';
 import 'package:potion_focus/data/local/isar_helpers.dart';
 import 'package:potion_focus/data/models/user_data_model.dart';
@@ -25,20 +26,20 @@ class EssenceService {
 
   Future<bool> spendEssence(int amount) async {
     final db = DatabaseHelper.instance;
-    final allUserData = await db.userDataModels.getAllItems();
-    final userData = allUserData.firstOrNull ?? UserDataModel();
 
-    if (userData.essenceBalance < amount) {
-      return false; // Not enough essence
-    }
+    // Atomic check-and-deduct inside a single transaction (bug 1.5)
+    return await db.writeTxn(() async {
+      final allUserData = await db.userDataModels.where().findAll();
+      final userData = allUserData.firstOrNull ?? UserDataModel();
 
-    userData.essenceBalance -= amount;
+      if (userData.essenceBalance < amount) {
+        return false; // Not enough essence
+      }
 
-    await db.writeTxn(() async {
+      userData.essenceBalance -= amount;
       await db.userDataModels.put(userData);
+      return true;
     });
-
-    return true;
   }
 
   Future<UserDataModel> getUserData() async {

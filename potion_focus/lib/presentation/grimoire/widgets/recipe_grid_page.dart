@@ -7,14 +7,15 @@ import 'book_page_background.dart';
 import 'recipe_thumbnail.dart';
 import 'recipe_detail_modal.dart';
 
-/// A grimoire page displaying a 3-column grid of recipe thumbnails.
-/// Each page shows recipes of a single rarity tier.
+/// A grimoire page displaying a grid of recipe thumbnails.
+/// Each page shows recipes of a single rarity tier with adaptive column count.
 class RecipeGridPage extends StatelessWidget {
   final String rarity;
   final List<RecipeModel> recipes;
   final int pageIndex; // Which page of this rarity (0-based)
   final int totalPagesForRarity;
   final RecipeService recipeService;
+  final int columnCount; // Adaptive column count based on rarity
 
   const RecipeGridPage({
     super.key,
@@ -23,6 +24,7 @@ class RecipeGridPage extends StatelessWidget {
     required this.pageIndex,
     required this.totalPagesForRarity,
     required this.recipeService,
+    this.columnCount = 3, // Default to 3 for backwards compatibility
   });
 
   @override
@@ -40,15 +42,16 @@ class RecipeGridPage extends StatelessWidget {
               _buildRarityHeader(context, rarityLabel, rarityColor),
               const SizedBox(height: 16),
 
-              // Recipe grid (3 columns)
+              // Recipe grid (adaptive column count)
               Expanded(
                 child: GridView.builder(
                   physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                    childAspectRatio: 0.75, // Taller than wide for potion + name
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: columnCount,
+                    crossAxisSpacing: columnCount >= 4 ? 6 : 8, // Tighter spacing for more columns
+                    mainAxisSpacing: columnCount >= 4 ? 6 : 8,
+                    // Adjust aspect ratio based on columns - less columns = larger items
+                    childAspectRatio: columnCount <= 2 ? 0.85 : 0.75,
                   ),
                   itemCount: recipes.length,
                   itemBuilder: (context, index) {

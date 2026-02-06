@@ -4,6 +4,7 @@ import 'package:potion_focus/data/local/isar_helpers.dart';
 import 'package:potion_focus/data/models/shop_item_model.dart';
 import 'package:potion_focus/services/essence_service.dart';
 import 'package:potion_focus/services/coin_service.dart';
+import 'package:potion_focus/services/subscription_service.dart';
 
 class ShopRepository {
   Future<List<ShopItemModel>> getAllItems() async {
@@ -38,6 +39,8 @@ class ShopRepository {
   }
 
   /// Purchase an item using the correct currency.
+  ///
+  /// For subscriber_only items, use [claimSubscriberItem] instead.
   Future<bool> purchaseItem(
     String itemId,
     EssenceService essenceService,
@@ -49,6 +52,9 @@ class ShopRepository {
     final item = allItems.where((i) => i.itemId == itemId).firstOrNull;
 
     if (item == null || item.purchased) return false;
+
+    // Subscriber-only items cannot be purchased with currency
+    if (item.currencyType == 'subscriber_only') return false;
 
     // Spend the correct currency
     bool success;
@@ -68,6 +74,46 @@ class ShopRepository {
     });
 
     return true;
+  }
+
+  /// Claim a subscriber-only item for free.
+  ///
+  /// Only works if user is a premium subscriber.
+  /// Returns true if claimed successfully.
+  Future<bool> claimSubscriberItem(
+    String itemId,
+    SubscriptionState subscriptionState,
+  ) async {
+    // Only premium users can claim subscriber items
+    if (!subscriptionState.isPremium) return false;
+
+    final db = DatabaseHelper.instance;
+
+    final allItems = await db.shopItemModels.getAllItems();
+    final item = allItems.where((i) => i.itemId == itemId).firstOrNull;
+
+    if (item == null || item.purchased) return false;
+
+    // Only subscriber_only items can be claimed this way
+    if (item.currencyType != 'subscriber_only') return false;
+
+    item.purchased = true;
+    item.purchasedAt = DateTime.now();
+
+    await db.writeTxn(() async {
+      await db.shopItemModels.put(item);
+    });
+
+    return true;
+  }
+
+  /// Get all subscriber-exclusive items.
+  Future<List<ShopItemModel>> getSubscriberExclusiveItems() async {
+    final db = DatabaseHelper.instance;
+    final allItems = await db.shopItemModels.getAllItems();
+    return allItems
+        .where((item) => item.currencyType == 'subscriber_only')
+        .toList();
   }
 }
 

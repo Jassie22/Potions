@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:potion_focus/core/theme/app_colors.dart';
+import 'package:potion_focus/core/models/liquid_presets.dart';
 
 /// Typed wrapper around the visualConfig JSON stored on each PotionModel.
 class VisualConfig {
@@ -54,19 +55,15 @@ class VisualConfig {
     });
   }
 
-  /// Resolve the liquid field to an actual Color.
+  /// Get the full liquid preset (name, colors, style, rarity).
+  LiquidPreset get liquidPreset => LiquidPreset.getPreset(liquid);
+
+  /// Resolve the liquid field to its primary color.
   Color get liquidColor {
     if (liquid == 'muddy_brown') {
       return const Color(0xFF6D4C2A);
     }
-    final match = RegExp(r'^liquid_(\d+)$').firstMatch(liquid);
-    if (match != null) {
-      final index = int.parse(match.group(1)!);
-      if (index >= 0 && index < AppColors.potionLiquids.length) {
-        return AppColors.potionLiquids[index];
-      }
-    }
-    return AppColors.potionLiquids[0];
+    return liquidPreset.primaryColor;
   }
 
   /// Resolve the rarity to its glow/accent color.

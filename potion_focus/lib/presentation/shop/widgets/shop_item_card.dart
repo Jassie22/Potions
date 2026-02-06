@@ -7,6 +7,8 @@ import 'package:potion_focus/services/upgrade_prompt_service.dart';
 import 'package:potion_focus/presentation/shared/widgets/upgrade_prompt_modal.dart';
 import 'package:potion_focus/presentation/shared/painting/pixel_gradients.dart';
 import 'package:potion_focus/presentation/shared/widgets/pixel_button.dart';
+import 'package:potion_focus/presentation/shared/painting/bottle_painter.dart';
+import 'package:potion_focus/presentation/shared/painting/background_themes.dart';
 
 class ShopItemCard extends ConsumerWidget {
   final ShopItemModel item;
@@ -57,19 +59,45 @@ class ShopItemCard extends ConsumerWidget {
                       Container(
                         width: 60,
                         height: 60,
+                        clipBehavior: Clip.hardEdge,
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
                           color: (isSubscriberOnly
                                   ? AppColors.legendary
                                   : rarityColor)
                               .withOpacity(0.2),
+                          border: item.category == 'background'
+                              ? Border.all(color: Colors.black54, width: 2)
+                              : null,
                         ),
-                        child: Icon(
-                          _getCategoryIcon(item.category),
-                          size: 30,
-                          color:
-                              isSubscriberOnly ? AppColors.legendary : rarityColor,
-                        ),
+                        child: item.category == 'bottle'
+                            ? Center(
+                                child: CustomPaint(
+                                  size: const Size(50, 55),
+                                  painter: BottlePainter(
+                                    shapeId: item.assetKey,
+                                    fillPercent: 0.6,
+                                    liquidColor: rarityColor.withOpacity(0.7),
+                                    glassColor: Colors.white.withOpacity(0.8),
+                                  ),
+                                ),
+                              )
+                            : item.category == 'background'
+                                // Show actual theme preview for backgrounds
+                                ? CustomPaint(
+                                    size: const Size(60, 60),
+                                    painter: BackgroundThemePainter(
+                                      themeId: item.assetKey,
+                                      animationValue: 0.3, // Static preview frame
+                                    ),
+                                  )
+                                : Icon(
+                                    _getCategoryIcon(item.category),
+                                    size: 30,
+                                    color: isSubscriberOnly
+                                        ? AppColors.legendary
+                                        : rarityColor,
+                                  ),
                       ),
                       // Exclusive star badge
                       if (isSubscriberOnly && !isPurchased)

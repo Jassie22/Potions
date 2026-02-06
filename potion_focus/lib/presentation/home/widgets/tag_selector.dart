@@ -62,15 +62,6 @@ class _TagSelectorState extends ConsumerState<TagSelector> {
       tagMap[tag.tag] = TagInfo(tag.tag, tag.colorIndex);
     }
 
-    // Add default tags with auto-assigned colors (if not already in database)
-    int defaultColorIndex = 0;
-    for (final defaultTag in AppConstants.defaultTags) {
-      if (!tagMap.containsKey(defaultTag)) {
-        tagMap[defaultTag] = TagInfo(defaultTag, defaultColorIndex % AppColors.tagColors.length);
-        defaultColorIndex++;
-      }
-    }
-
     setState(() {
       _tagInfoMap = tagMap;
       _allTags = tagMap.keys.toList()..sort();
@@ -167,14 +158,16 @@ class _TagSelectorState extends ConsumerState<TagSelector> {
         ),
         const SizedBox(height: 4),
         Text(
-          selectedCount == 0
-              ? 'Select at least one tag to start brewing'
-              : isAtLimit
-                  ? 'Maximum tags selected'
-                  : 'Select tags to categorize your session',
+          _allTags.isEmpty
+              ? 'Create your first tag below'
+              : selectedCount == 0
+                  ? 'Select at least one tag to start brewing'
+                  : isAtLimit
+                      ? 'Maximum tags selected'
+                      : 'Select tags to categorize your session',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Colors.grey[600],
-                fontStyle: selectedCount == 0 ? FontStyle.italic : FontStyle.normal,
+                fontStyle: (selectedCount == 0 || _allTags.isEmpty) ? FontStyle.italic : FontStyle.normal,
               ),
         ),
         const SizedBox(height: 12),

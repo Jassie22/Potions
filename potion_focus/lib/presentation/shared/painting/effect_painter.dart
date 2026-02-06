@@ -1,12 +1,9 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-/// Paints rarity-based effects overlaid on a bottle.
+/// Paints pixel-art rarity effects overlaid on a bottle.
 ///
-/// Effect types: 'effect_glow', 'effect_sparkles', 'effect_smoke',
-/// 'effect_legendary_glow', 'none'.
-///
-/// [animationValue] should be driven by an AnimationController (0.0-1.0, repeating).
+/// All effects use square pixels and no anti-aliasing for a retro game feel.
 class EffectPainter extends CustomPainter {
   final String effectType;
   final Color color;
@@ -34,104 +31,132 @@ class EffectPainter extends CustomPainter {
         _paintLegendaryGlow(canvas, size);
         break;
       default:
-        break; // 'none' -- nothing to paint
+        break;
     }
   }
 
-  /// Soft pulsing glow around the bottle (uncommon).
+  /// Pulsing pixel border glow (uncommon).
   void _paintGlow(Canvas canvas, Size size) {
-    final opacity = 0.1 + animationValue * 0.15;
-    final radius = size.width * 0.4 + animationValue * size.width * 0.08;
-
+    final pixelSize = size.width / 16;
+    final opacity = 0.15 + animationValue * 0.2;
     final paint = Paint()
-      ..shader = RadialGradient(
-        colors: [
-          color.withOpacity(opacity),
-          color.withOpacity(0.0),
-        ],
-        stops: const [0.3, 1.0],
-      ).createShader(
-        Rect.fromCircle(
-          center: Offset(size.width / 2, size.height * 0.55),
-          radius: radius,
-        ),
-      );
+      ..color = color.withOpacity(opacity)
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = false;
 
-    canvas.drawCircle(
-      Offset(size.width / 2, size.height * 0.55),
-      radius,
-      paint,
-    );
+    // Draw a square halo of colored pixels around center
+    final cx = size.width / 2;
+    final cy = size.height * 0.55;
+    final radius = size.width * 0.35 + animationValue * pixelSize * 2;
+
+    // Draw pixel ring
+    for (double angle = 0; angle < math.pi * 2; angle += math.pi / 8) {
+      final x = cx + math.cos(angle) * radius;
+      final y = cy + math.sin(angle) * radius * 0.8;
+      canvas.drawRect(
+        Rect.fromLTWH(
+          (x / pixelSize).floor() * pixelSize,
+          (y / pixelSize).floor() * pixelSize,
+          pixelSize,
+          pixelSize,
+        ),
+        paint,
+      );
+    }
   }
 
-  /// Small sparkle dots that twinkle (rare).
+  /// Small pixel cross sparkles that twinkle (rare).
   void _paintSparkles(Canvas canvas, Size size) {
-    final rng = math.Random(42); // Fixed seed for consistent positions
-    final paint = Paint()..style = PaintingStyle.fill;
+    final rng = math.Random(42);
+    final pixelSize = size.width / 20;
+    final paint = Paint()
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = false;
 
     for (int i = 0; i < 8; i++) {
       final x = size.width * (0.15 + rng.nextDouble() * 0.7);
       final y = size.height * (0.2 + rng.nextDouble() * 0.6);
-      // Each sparkle has its own phase offset
       final phase = (animationValue + i * 0.125) % 1.0;
-      final sparkleOpacity = (math.sin(phase * math.pi * 2) * 0.5 + 0.5) * 0.7;
-      final sparkleSize = 1.5 + rng.nextDouble() * 2.0;
+      final sparkleOpacity = (math.sin(phase * math.pi * 2) * 0.5 + 0.5) * 0.8;
+
+      if (sparkleOpacity < 0.2) continue;
 
       paint.color = Colors.white.withOpacity(sparkleOpacity);
-      canvas.drawCircle(Offset(x, y), sparkleSize, paint);
+
+      // Snap to pixel grid
+      final px = (x / pixelSize).floor() * pixelSize;
+      final py = (y / pixelSize).floor() * pixelSize;
+
+      // Draw cross/plus shape
+      canvas.drawRect(Rect.fromLTWH(px, py, pixelSize, pixelSize), paint); // center
+      canvas.drawRect(Rect.fromLTWH(px - pixelSize, py, pixelSize, pixelSize), paint); // left
+      canvas.drawRect(Rect.fromLTWH(px + pixelSize, py, pixelSize, pixelSize), paint); // right
+      canvas.drawRect(Rect.fromLTWH(px, py - pixelSize, pixelSize, pixelSize), paint); // top
+      canvas.drawRect(Rect.fromLTWH(px, py + pixelSize, pixelSize, pixelSize), paint); // bottom
     }
   }
 
-  /// Rising wisps of smoke above the bottle (epic).
+  /// Rising pixel smoke puffs (epic).
   void _paintSmoke(Canvas canvas, Size size) {
-    final paint = Paint()..style = PaintingStyle.fill;
+    final pixelSize = size.width / 16;
+    final paint = Paint()
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = false;
 
     for (int i = 0; i < 4; i++) {
       final phase = (animationValue + i * 0.25) % 1.0;
-      final x = size.width * (0.35 + i * 0.1) +
-          math.sin(phase * math.pi * 2) * size.width * 0.05;
+      final x = size.width * (0.35 + i * 0.1);
       final y = size.height * 0.15 - phase * size.height * 0.12;
-      final opacity = (1.0 - phase) * 0.2;
-      final radius = size.width * 0.04 + phase * size.width * 0.06;
+      final opacity = (1.0 - phase) * 0.3;
+
+      if (opacity < 0.05) continue;
 
       paint.color = color.withOpacity(opacity);
-      canvas.drawCircle(Offset(x, y), radius, paint);
+
+      // Snap to grid and draw 2x2 pixel block
+      final px = (x / pixelSize).floor() * pixelSize;
+      final py = (y / pixelSize).floor() * pixelSize;
+
+      canvas.drawRect(Rect.fromLTWH(px, py, pixelSize * 2, pixelSize * 2), paint);
     }
   }
 
-  /// Intense golden glow with rotating sparkle ring (legendary).
+  /// Golden pixel glow with orbiting pixel squares (legendary).
   void _paintLegendaryGlow(Canvas canvas, Size size) {
+    final pixelSize = size.width / 20;
     final cx = size.width / 2;
     final cy = size.height * 0.55;
 
-    // Outer glow
-    final glowRadius = size.width * 0.5 + animationValue * size.width * 0.05;
+    // Outer pixel glow ring
     final glowPaint = Paint()
-      ..shader = RadialGradient(
-        colors: [
-          color.withOpacity(0.2),
-          color.withOpacity(0.05),
-          color.withOpacity(0.0),
-        ],
-        stops: const [0.0, 0.6, 1.0],
-      ).createShader(
-        Rect.fromCircle(center: Offset(cx, cy), radius: glowRadius),
-      );
-    canvas.drawCircle(Offset(cx, cy), glowRadius, glowPaint);
+      ..color = color.withOpacity(0.15 + animationValue * 0.08)
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = false;
 
-    // Rotating sparkle ring
+    final radius = size.width * 0.4;
+    for (double angle = 0; angle < math.pi * 2; angle += math.pi / 10) {
+      final x = cx + math.cos(angle) * radius;
+      final y = cy + math.sin(angle) * radius * 0.7;
+      final px = (x / pixelSize).floor() * pixelSize;
+      final py = (y / pixelSize).floor() * pixelSize;
+      canvas.drawRect(Rect.fromLTWH(px, py, pixelSize, pixelSize), glowPaint);
+    }
+
+    // Orbiting pixel sparkles
     final sparkPaint = Paint()
-      ..color = Colors.white.withOpacity(0.6)
-      ..style = PaintingStyle.fill;
+      ..color = Colors.white.withOpacity(0.7)
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = false;
 
-    final ringRadius = size.width * 0.35;
+    final ringRadius = size.width * 0.32;
     for (int i = 0; i < 6; i++) {
       final angle = animationValue * math.pi * 2 + i * math.pi / 3;
       final sx = cx + math.cos(angle) * ringRadius;
-      final sy = cy + math.sin(angle) * ringRadius * 0.6; // elliptical
-      final sparkSize = 1.5 + math.sin(animationValue * math.pi * 2 + i) * 0.8;
+      final sy = cy + math.sin(angle) * ringRadius * 0.6;
+      final px = (sx / pixelSize).floor() * pixelSize;
+      final py = (sy / pixelSize).floor() * pixelSize;
 
-      canvas.drawCircle(Offset(sx, sy), sparkSize, sparkPaint);
+      canvas.drawRect(Rect.fromLTWH(px, py, pixelSize, pixelSize), sparkPaint);
     }
   }
 

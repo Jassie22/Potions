@@ -8,6 +8,7 @@ import 'package:potion_focus/data/local/isar_helpers.dart';
 import 'package:potion_focus/data/models/potion_model.dart';
 import 'package:potion_focus/data/models/session_model.dart';
 import 'package:potion_focus/presentation/shared/painting/potion_renderer.dart';
+import 'package:potion_focus/presentation/shared/widgets/pixel_button.dart';
 
 class PotionDetailModal extends ConsumerWidget {
   final PotionModel potion;
@@ -24,7 +25,7 @@ class PotionDetailModal extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: const BorderRadius.vertical(top: Radius.zero),
       ),
       padding: const EdgeInsets.all(24),
       child: SafeArea(
@@ -40,7 +41,7 @@ class PotionDetailModal extends ConsumerWidget {
                   height: 4,
                   decoration: BoxDecoration(
                     color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: BorderRadius.zero,
                   ),
                 ),
               ),
@@ -65,27 +66,29 @@ class PotionDetailModal extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
 
-              // Stats card
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      _buildStatRow(
-                        context,
-                        'Essence Earned',
-                        '${potion.essenceEarned}',
-                        Icons.auto_awesome,
-                      ),
-                      const Divider(),
-                      _buildStatRow(
-                        context,
-                        'Brewed On',
-                        potion.createdAt.toFormattedDateTime(),
-                        Icons.access_time,
-                      ),
-                    ],
-                  ),
+              // Stats card (pixel-art styled container)
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  border: Border.all(color: Colors.black54, width: 2),
+                ),
+                child: Column(
+                  children: [
+                    _buildStatRow(
+                      context,
+                      'Essence Earned',
+                      '${potion.essenceEarned}',
+                      Icons.auto_awesome,
+                    ),
+                    Container(height: 2, color: Colors.black26, margin: const EdgeInsets.symmetric(vertical: 8)),
+                    _buildStatRow(
+                      context,
+                      'Brewed On',
+                      potion.createdAt.toFormattedDateTime(),
+                      Icons.access_time,
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 16),
@@ -97,37 +100,48 @@ class PotionDetailModal extends ConsumerWidget {
                   if (!snapshot.hasData) return const SizedBox();
 
                   final session = snapshot.data!;
-                  return Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Session Details',
-                            style: Theme.of(context).textTheme.titleMedium,
+                  return Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      border: Border.all(color: Colors.black54, width: 2),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Session Details',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 12),
+                        _buildStatRow(
+                          context,
+                          'Duration',
+                          '${session.durationMinutes} minutes',
+                          Icons.timer,
+                        ),
+                        if (session.tags.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            children: session.tags
+                                .map((tag) => Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: rarityColor.withOpacity(0.1),
+                                        border: Border.all(color: rarityColor.withOpacity(0.4), width: 2),
+                                      ),
+                                      child: Text(
+                                        '#$tag',
+                                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                              color: rarityColor,
+                                            ),
+                                      ),
+                                    ))
+                                .toList(),
                           ),
-                          const SizedBox(height: 12),
-                          _buildStatRow(
-                            context,
-                            'Duration',
-                            '${session.durationMinutes} minutes',
-                            Icons.timer,
-                          ),
-                          if (session.tags.isNotEmpty) ...[
-                            const SizedBox(height: 8),
-                            Wrap(
-                              spacing: 8,
-                              children: session.tags
-                                  .map((tag) => Chip(
-                                        label: Text('#$tag'),
-                                        backgroundColor: rarityColor.withOpacity(0.1),
-                                      ))
-                                  .toList(),
-                            ),
-                          ],
                         ],
-                      ),
+                      ],
                     ),
                   );
                 },
@@ -135,25 +149,28 @@ class PotionDetailModal extends ConsumerWidget {
               const SizedBox(height: 16),
 
               // Lore/flavor text
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    _getLoreText(potion.rarity),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontStyle: FontStyle.italic,
-                          color: Colors.grey[600],
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  border: Border.all(color: Colors.black54, width: 2),
+                ),
+                child: Text(
+                  _getLoreText(potion.rarity),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontStyle: FontStyle.italic,
+                        color: Colors.grey[600],
+                      ),
+                  textAlign: TextAlign.center,
                 ),
               ),
               const SizedBox(height: 16),
 
-              // Close button
-              ElevatedButton(
+              // Close button (pixel-art styled)
+              PixelButton(
+                text: 'Close',
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Close'),
+                color: rarityColor,
               ),
             ],
           ),
@@ -206,4 +223,3 @@ class PotionDetailModal extends ConsumerWidget {
     }
   }
 }
-

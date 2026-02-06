@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potion_focus/core/theme/app_colors.dart';
 import 'package:potion_focus/data/models/recipe_model.dart';
 import 'package:potion_focus/services/recipe_service.dart';
+import 'package:potion_focus/presentation/shared/widgets/empty_state_art.dart';
 import 'package:potion_focus/presentation/shared/widgets/pixel_loading.dart';
 import 'widgets/recipe_grid_page.dart';
 import 'widgets/book_page_background.dart';
@@ -21,8 +22,21 @@ class _GrimoireBookScreenState extends ConsumerState<GrimoireBookScreen> {
   late PageController _pageController;
   double _currentPage = 0;
 
-  /// Number of recipes to display per grid page
-  static const int recipesPerPage = 9;
+  /// Get recipes per page based on rarity - more for common, fewer for rare
+  int _getRecipesPerPage(String rarity) => switch (rarity) {
+        'common' || 'uncommon' => 12, // 4x3 grid
+        'rare' => 9, // 3x3 grid
+        'epic' || 'legendary' => 6, // 3x2 or 2x3 grid
+        _ => 9,
+      };
+
+  /// Get column count based on rarity
+  int _getColumnCount(String rarity) => switch (rarity) {
+        'common' || 'uncommon' => 4,
+        'rare' => 3,
+        'epic' || 'legendary' => 2,
+        _ => 3,
+      };
 
   @override
   void initState() {
@@ -89,15 +103,9 @@ class _GrimoireBookScreenState extends ConsumerState<GrimoireBookScreen> {
                     margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.zero,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.4),
-                          blurRadius: 16,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+                      border: Border.all(color: Colors.black, width: 2),
                     ),
-                    clipBehavior: Clip.antiAlias,
+                    clipBehavior: Clip.hardEdge,
                     child: PageView.builder(
                       controller: _pageController,
                       itemCount: totalPages,
@@ -129,34 +137,18 @@ class _GrimoireBookScreenState extends ConsumerState<GrimoireBookScreen> {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return BookPageBackground(
+    return const BookPageBackground(
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.menu_book_outlined, size: 80, color: Colors.grey[400]),
-            const SizedBox(height: 16),
-            Text(
-              'Your Grimoire Awaits',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: const Color(0xFF3D2B1F),
-                  ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Complete focus sessions to discover recipes',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF5D4E37),
-                  ),
-            ),
-          ],
+        child: PixelEmptyState(
+          type: EmptyStateType.grimoire,
+          message: 'The pages are blank...\nDiscover recipes by completing focus sessions!',
         ),
       ),
     );
   }
 
   /// Build grid pages with recipes grouped by rarity.
-  /// Each page holds up to [recipesPerPage] recipes.
+  /// Each page holds a variable number of recipes based on rarity.
   /// Filters out bottle-reward recipes (bottles belong in the shop).
   List<RecipeGridPage> _buildGridPages(List<RecipeModel> recipes, RecipeService service) {
     final pages = <RecipeGridPage>[];
@@ -174,6 +166,10 @@ class _GrimoireBookScreenState extends ConsumerState<GrimoireBookScreen> {
       final group = rarityGroups[rarity];
       if (group == null || group.isEmpty) continue;
 
+      // Get adaptive page size for this rarity
+      final recipesPerPage = _getRecipesPerPage(rarity);
+      final columnCount = _getColumnCount(rarity);
+
       // Calculate number of pages needed for this rarity
       final totalPagesForRarity = (group.length / recipesPerPage).ceil();
 
@@ -189,6 +185,7 @@ class _GrimoireBookScreenState extends ConsumerState<GrimoireBookScreen> {
           pageIndex: pageIndex,
           totalPagesForRarity: totalPagesForRarity,
           recipeService: service,
+          columnCount: columnCount,
         ));
       }
     }

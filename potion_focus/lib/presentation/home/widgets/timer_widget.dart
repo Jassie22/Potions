@@ -39,12 +39,28 @@ class _TimerWidgetState extends ConsumerState<TimerWidget> {
   void initState() {
     super.initState();
     _accelerometerSubscription = accelerometerEventStream().listen((event) {
-      // event.x is tilt left/right: negative = tilt left, positive = tilt right
-      // event.y is tilt forward/back: positive = tilt forward, negative = tilt back
       setState(() {
-        // Normalize: typical range is -10 to 10, map to -1 to 1
+        // X tilt (left/right) - normalize to -1 to 1
         _tiltX = (event.x / 5.0).clamp(-1.0, 1.0);
-        _tiltY = (event.y / 5.0).clamp(-1.0, 1.0);
+
+        // Y tilt - handle both upright and inverted positions
+        // Upright: Y ~ +9.8 (gravity pulling down on bottom of phone)
+        // Inverted: Y ~ -9.8 (gravity pulling down on top of phone)
+        // Tilted forward/back: |Y| < 9.8
+
+        // Calculate how upright the phone is (0 when flat, ~9.8 when upright/inverted)
+        final uprightness = event.y.abs();
+
+        // The deviation from fully upright (9.8) tells us the forward/back tilt
+        final tiltFromUpright = (uprightness - 9.8) / 5.0;
+
+        // When phone is inverted (Y negative), flip the tilt direction
+        // so liquid still responds correctly to forward/back tilts
+        if (event.y >= 0) {
+          _tiltY = tiltFromUpright.clamp(-1.0, 1.0);
+        } else {
+          _tiltY = (-tiltFromUpright).clamp(-1.0, 1.0);
+        }
       });
     });
   }
@@ -59,11 +75,9 @@ class _TimerWidgetState extends ConsumerState<TimerWidget> {
   Widget build(BuildContext context) {
     final timerState = ref.watch(timerServiceProvider);
 
-    // Derive fill percent from timer progress
+    // Use the fillPercent getter from TimerState (handles both modes)
     // Show 30% fill in preview so user can see their selected liquid color
-    final fillPercent = timerState.isRunning && timerState.totalDuration.inSeconds > 0
-        ? 1.0 - (timerState.remainingDuration.inSeconds / timerState.totalDuration.inSeconds)
-        : 0.3;
+    final fillPercent = timerState.isRunning ? timerState.fillPercent : 0.3;
 
     // Use selected bottle/liquid for the preview, or the timer state's when running
     final bottleForDisplay = timerState.isRunning
@@ -80,6 +94,28 @@ class _TimerWidgetState extends ConsumerState<TimerWidget> {
       rarity: 'common',
     );
 
+    // Determine timer display text based on mode
+    String timerText;
+    if (!timerState.isRunning) {
+      timerText = widget.duration.toTimerString();
+    } else if (timerState.isFreeForm) {
+      // Free-form: show elapsed time counting UP
+      timerText = timerState.elapsedDuration.toTimerString();
+    } else {
+      // Preset: show remaining time counting DOWN
+      timerText = timerState.remainingDuration.toTimerString();
+    }
+
+    // Determine status text based on mode
+    String statusText;
+    if (timerState.isPaused) {
+      statusText = 'Paused';
+    } else if (timerState.isFreeForm) {
+      statusText = 'Free-Form Brewing...';
+    } else {
+      statusText = 'Brewing...';
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -95,25 +131,38 @@ class _TimerWidgetState extends ConsumerState<TimerWidget> {
         ),
         const SizedBox(height: 16),
 
-        // Timer countdown text
-        Text(
-          timerState.isRunning
-              ? timerState.remainingDuration.toTimerString()
-              : widget.duration.toTimerString(),
-          style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 48,
-                color: Colors.white.withOpacity(0.95),
-              ),
+        // Timer text
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            timerText,
+            maxLines: 1,
+            style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 48,
+                  color: Colors.white.withOpacity(0.95),
+                ),
+          ),
         ),
         if (timerState.isRunning) ...[
           const SizedBox(height: 4),
           Text(
-            timerState.isPaused ? 'Paused' : 'Brewing...',
+            statusText,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Colors.white.withOpacity(0.6),
                 ),
           ),
+          // Show max time hint for free-form
+          if (timerState.isFreeForm) ...[
+            const SizedBox(height: 2),
+            Text(
+              '(up to 2 hours)',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.white.withOpacity(0.4),
+                    fontSize: 10,
+                  ),
+            ),
+          ],
         ],
         const SizedBox(height: 24),
 
@@ -160,6 +209,10 @@ class _TimerWidgetState extends ConsumerState<TimerWidget> {
   }
 
   Widget _buildRunningControls(BuildContext context, TimerState timerState) {
+    // Determine if free-form session has enough time for a valid potion
+    final canEndWithPotion = timerState.isFreeForm &&
+        timerState.elapsedDuration.inMinutes >= freeFormMinMinutes;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -197,33 +250,96 @@ class _TimerWidgetState extends ConsumerState<TimerWidget> {
         ),
         const SizedBox(width: 16),
 
-        // Cancel button
-        GestureDetector(
-          onTap: () => _handleCancelSession(context, timerState),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              border: Border.all(color: AppColors.error, width: 2),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.stop, color: AppColors.error, size: 20),
-                const SizedBox(width: 6),
-                Text(
-                  'Cancel',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.error,
-                        fontWeight: FontWeight.w600,
-                      ),
+        // End Session / Cancel button
+        if (timerState.isFreeForm)
+          // Free-form: End Session button (positive action if >= 10 min)
+          GestureDetector(
+            onTap: () => _handleEndFreeFormSession(context, timerState),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+              decoration: BoxDecoration(
+                color: canEndWithPotion ? AppColors.success : Colors.transparent,
+                border: Border.all(
+                  color: canEndWithPotion ? Colors.black87 : AppColors.warning,
+                  width: 2,
                 ),
-              ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    canEndWithPotion ? Icons.check : Icons.stop,
+                    color: canEndWithPotion ? Colors.white : AppColors.warning,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'End Session',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: canEndWithPotion ? Colors.white : AppColors.warning,
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else
+          // Preset: Cancel button (negative action)
+          GestureDetector(
+            onTap: () => _handleCancelSession(context, timerState),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                border: Border.all(color: AppColors.error, width: 2),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.stop, color: AppColors.error, size: 20),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Cancel',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.error,
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
       ],
     );
+  }
+
+  /// Handle ending a free-form session
+  Future<void> _handleEndFreeFormSession(BuildContext context, TimerState timerState) async {
+    final feedbackService = ref.read(feedbackServiceProvider);
+    feedbackService.haptic(HapticType.medium);
+
+    final elapsedMinutes = timerState.elapsedDuration.inMinutes;
+
+    if (elapsedMinutes < freeFormMinMinutes) {
+      // Not enough time - warn and ask for confirmation
+      final confirmed = await showPixelConfirmDialog(
+        context: context,
+        title: 'End Early?',
+        message:
+            "You've only focused for ${timerState.elapsedDuration.toTimerString()}.\n\nMinimum $freeFormMinMinutes minutes needed for a valid potion. Ending now will create a Muddy Brew.",
+        confirmText: 'End Anyway',
+        cancelText: 'Keep Going',
+        isDangerous: true,
+      );
+
+      if (confirmed == true) {
+        ref.read(timerServiceProvider.notifier).stopTimer();
+      }
+    } else {
+      // Enough time - end the session normally (will create valid potion)
+      ref.read(timerServiceProvider.notifier).stopTimer();
+    }
   }
 
   /// Handle cancel with confirmation dialog if session > 30 seconds

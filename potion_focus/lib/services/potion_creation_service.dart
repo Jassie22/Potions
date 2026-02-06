@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potion_focus/core/utils/helpers.dart';
-import 'package:potion_focus/core/theme/app_colors.dart';
 import 'package:potion_focus/data/local/database.dart';
 import 'package:potion_focus/data/local/isar_helpers.dart';
 import 'package:potion_focus/data/models/potion_model.dart';
@@ -11,8 +10,10 @@ class PotionCreationService {
   Future<PotionModel> createPotion(
     String sessionId,
     int durationMinutes,
-    List<String> tags,
-  ) async {
+    List<String> tags, {
+    String selectedBottle = 'bottle_round',
+    String selectedLiquid = 'liquid_0',
+  }) async {
     final db = DatabaseHelper.instance;
 
     // Get user data for streak calculation
@@ -34,7 +35,7 @@ class PotionCreationService {
     );
 
     // Generate visual config
-    final visualConfig = _generateVisualConfig(rarity, tags);
+    final visualConfig = _generateVisualConfig(rarity, tags, selectedBottle: selectedBottle, selectedLiquid: selectedLiquid);
 
     // Create potion
     final now = DateTime.now();
@@ -97,12 +98,10 @@ class PotionCreationService {
     }
   }
 
-  Map<String, dynamic> _generateVisualConfig(String rarity, List<String> tags) {
-    // Select bottle based on rarity
-    final bottle = _selectBottle(rarity);
-
-    // Select liquid color (could be influenced by tags in the future)
-    final liquid = _selectLiquid(rarity);
+  Map<String, dynamic> _generateVisualConfig(String rarity, List<String> tags, {String selectedBottle = 'bottle_round', String selectedLiquid = 'liquid_0'}) {
+    // Use the user's selected bottle and liquid
+    final bottle = selectedBottle;
+    final liquid = selectedLiquid;
 
     // Select effect based on rarity
     final effect = _selectEffect(rarity);
@@ -113,28 +112,6 @@ class PotionCreationService {
       'effect': effect,
       'rarity': rarity,
     };
-  }
-
-  String _selectBottle(String rarity) {
-    // For now, use default bottles. In Phase 2, check purchased bottles
-    switch (rarity) {
-      case 'legendary':
-        return 'bottle_legendary';
-      case 'epic':
-        return 'bottle_potion';
-      case 'rare':
-        return 'bottle_flask';
-      case 'uncommon':
-        return 'bottle_tall';
-      default:
-        return 'bottle_round';
-    }
-  }
-
-  String _selectLiquid(String rarity) {
-    // Select from available liquid colors
-    final colorIndex = Helpers.randomInt(0, AppColors.potionLiquids.length - 1);
-    return 'liquid_$colorIndex';
   }
 
   String _selectEffect(String rarity) {

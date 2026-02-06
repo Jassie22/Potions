@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
 import 'package:potion_focus/data/local/database.dart';
 import 'package:potion_focus/data/local/isar_helpers.dart';
 import 'package:potion_focus/data/models/user_data_model.dart';
@@ -25,18 +26,18 @@ class CoinService {
 
   Future<bool> spendCoins(int amount) async {
     final db = DatabaseHelper.instance;
-    final allUserData = await db.userDataModels.getAllItems();
-    final userData = allUserData.firstOrNull ?? UserDataModel();
 
-    if (userData.coinBalance < amount) return false;
+    // Atomic check-and-deduct inside a single transaction (bug 1.5)
+    return await db.writeTxn(() async {
+      final allUserData = await db.userDataModels.where().findAll();
+      final userData = allUserData.firstOrNull ?? UserDataModel();
 
-    userData.coinBalance -= amount;
+      if (userData.coinBalance < amount) return false;
 
-    await db.writeTxn(() async {
+      userData.coinBalance -= amount;
       await db.userDataModels.put(userData);
+      return true;
     });
-
-    return true;
   }
 }
 

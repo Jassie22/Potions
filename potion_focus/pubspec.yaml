@@ -39,6 +39,16 @@ dependencies:
   
   # Timer & Background
   wakelock_plus: ^1.1.4
+  sensors_plus: ^7.0.0
+
+  # Audio Feedback
+  audioplayers: ^5.2.1
+
+  # In-App Purchases
+  purchases_flutter: ^8.0.0
+
+  # URL Launcher (for manage subscription links)
+  url_launcher: ^6.2.0
 
 dev_dependencies:
   flutter_test:
@@ -58,9 +68,15 @@ flutter:
     - assets/images/
     - assets/lottie/
     - assets/fonts/
+    - assets/sounds/
   
-  # fonts:
-  #   - family: PotionFocus
-  #     fonts:
-  #       - asset: assets/fonts/placeholder.ttf
+  fonts:
+    - family: PressStart2P
+      fonts:
+        - asset: assets/fonts/PressStart2P-Regular.ttf
+    - family: Silkscreen
+      fonts:
+        - asset: assets/fonts/Silkscreen-Regular.ttf
+        - asset: assets/fonts/Silkscreen-Bold.ttf
+          weight: 700
 

@@ -6,6 +6,7 @@ import 'package:potion_focus/data/repositories/potion_repository.dart';
 import 'package:potion_focus/presentation/cabinet/widgets/potion_detail_modal.dart';
 import 'package:potion_focus/presentation/cabinet/widgets/shelf_row.dart';
 import 'package:potion_focus/presentation/cabinet/widgets/statistics_screen.dart';
+import 'package:potion_focus/presentation/shared/widgets/empty_state_art.dart';
 import 'package:potion_focus/presentation/shared/widgets/pixel_loading.dart';
 
 class CabinetScreen extends ConsumerStatefulWidget {
@@ -140,28 +141,10 @@ class _CabinetScreenState extends ConsumerState<CabinetScreen> {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.inventory_2_outlined,
-            size: 80,
-            color: Colors.grey[400],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Your Cabinet is Empty',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Complete focus sessions to brew potions',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600],
-                ),
-          ),
-        ],
+    return const Center(
+      child: PixelEmptyState(
+        type: EmptyStateType.cabinet,
+        message: 'Your cabinet awaits its first potion.\nComplete a focus session to start brewing!',
       ),
     );
   }

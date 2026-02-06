@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:potion_focus/core/errors/app_error.dart';
 import 'package:potion_focus/core/theme/app_colors.dart';
 import 'package:potion_focus/data/repositories/shop_repository.dart';
 import 'package:potion_focus/services/essence_service.dart';
 import 'package:potion_focus/services/coin_service.dart';
+import 'package:potion_focus/services/feedback_service.dart';
+import 'package:potion_focus/presentation/shared/widgets/error_snackbar.dart';
+import 'package:potion_focus/presentation/shared/widgets/pixel_loading.dart';
 import 'package:potion_focus/presentation/shop/widgets/shop_item_card.dart';
+import 'package:potion_focus/presentation/home/widgets/bottle_selector.dart';
 
 class ShopScreen extends ConsumerStatefulWidget {
   const ShopScreen({super.key});
@@ -40,7 +45,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: Colors.blue.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.zero,
                   border: Border.all(color: Colors.blue.withOpacity(0.5)),
                 ),
                 child: Row(
@@ -69,7 +74,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: Colors.amber.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.zero,
                   border: Border.all(color: Colors.amber.withOpacity(0.5)),
                 ),
                 child: Row(
@@ -104,11 +109,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                 const SizedBox(width: 8),
                 _buildCategoryChip(context, 'bottle', 'Bottles'),
                 const SizedBox(width: 8),
-                _buildCategoryChip(context, 'liquid', 'Liquids'),
-                const SizedBox(width: 8),
-                _buildCategoryChip(context, 'effect', 'Effects'),
-                const SizedBox(width: 8),
-                _buildCategoryChip(context, 'background', 'Backgrounds'),
+                _buildCategoryChip(context, 'background', 'Themes'),
               ],
             ),
           ),
@@ -138,7 +139,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                     crossAxisCount: 2,
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
-                    childAspectRatio: 0.75,
+                    childAspectRatio: 0.62,
                   ),
                   itemCount: filteredItems.length,
                   itemBuilder: (context, index) {
@@ -150,7 +151,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
                   },
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const PixelLoadingIndicator(message: 'Loading shop...'),
               error: (error, stack) => Center(child: Text('Error: $error')),
             ),
           ),
@@ -162,15 +163,29 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
   Widget _buildCategoryChip(BuildContext context, String category, String label) {
     final isSelected = _selectedCategory == category;
 
-    return FilterChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (selected) {
+    return GestureDetector(
+      onTap: () {
         setState(() {
           _selectedCategory = category;
         });
       },
-      selectedColor: AppColors.primaryLight.withOpacity(0.3),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primaryLight.withOpacity(0.3) : Colors.transparent,
+          border: Border.all(
+            color: isSelected ? AppColors.primaryLight : Colors.black54,
+            width: 2,
+          ),
+        ),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                color: isSelected ? AppColors.primaryLight : null,
+              ),
+        ),
+      ),
     );
   }
 
@@ -178,31 +193,66 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
     final repository = ref.read(shopRepositoryProvider);
     final essenceService = ref.read(essenceServiceProvider);
     final coinService = ref.read(coinServiceProvider);
+    final feedbackService = ref.read(feedbackServiceProvider);
 
+    // Get item details to determine specific error
+    final items = await repository.getAllItems();
+    final item = items.where((i) => i.itemId == itemId).firstOrNull;
+
+    if (item == null) {
+      feedbackService.feedback(sound: SoundType.error, haptic: HapticType.error);
+      if (mounted) showErrorSnackbar(context, AppErrors.itemNotFound);
+      return;
+    }
+
+    if (item.purchased) {
+      feedbackService.feedback(sound: SoundType.error, haptic: HapticType.error);
+      if (mounted) showErrorSnackbar(context, AppErrors.itemAlreadyOwned);
+      return;
+    }
+
+    // Check balance before purchase for specific error message
+    if (item.currencyType == 'coins') {
+      final balance = await coinService.getCoinBalance();
+      if (balance < item.coinCost) {
+        feedbackService.feedback(sound: SoundType.error, haptic: HapticType.error);
+        if (mounted) {
+          showErrorSnackbar(context, AppErrors.insufficientCoins(item.coinCost, balance));
+        }
+        return;
+      }
+    } else {
+      final balance = await essenceService.getEssenceBalance();
+      if (balance < item.essenceCost) {
+        feedbackService.feedback(sound: SoundType.error, haptic: HapticType.error);
+        if (mounted) {
+          showErrorSnackbar(context, AppErrors.insufficientEssence(item.essenceCost, balance));
+        }
+        return;
+      }
+    }
+
+    // Attempt purchase
     final success = await repository.purchaseItem(itemId, essenceService, coinService);
 
     if (success) {
+      feedbackService.feedback(
+        sound: SoundType.purchase,
+        haptic: HapticType.success,
+      );
+
       ref.invalidate(shopItemsProvider);
       ref.invalidate(essenceBalanceProvider);
       ref.invalidate(coinBalanceProvider);
+      ref.invalidate(ownedBottlesProvider); // Refresh bottle selector
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Purchase successful!'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        showSuccessSnackbar(context, 'Purchase successful!');
       }
     } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Not enough currency or item already owned'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      // Fallback for unexpected failures
+      feedbackService.feedback(sound: SoundType.error, haptic: HapticType.error);
+      if (mounted) showErrorSnackbar(context, AppErrors.unknownError);
     }
   }
 }

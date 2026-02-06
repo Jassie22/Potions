@@ -53,8 +53,8 @@ class DatabaseHelper {
     if (userDataCount == 0) {
       await _isar!.writeTxn(() async {
         await _isar!.userDataModels.put(UserDataModel(
-          essenceBalance: 9999,
-          coinBalance: 999,
+          essenceBalance: 0,
+          coinBalance: 0,
         ));
       });
     }
@@ -165,122 +165,25 @@ class DatabaseHelper {
       ),
 
       // ═══════════════════════════════════
-      // POTIONS (formerly "Liquids")
+      // BOTTLES (Subscriber Exclusive)
       // ═══════════════════════════════════
       ShopItemModel(
-        itemId: 'liquid_purple',
-        name: 'Twilight Essence',
-        category: 'liquid',
-        assetKey: 'liquid_0',
-        essenceCost: 0,
-        currencyType: 'essence',
-        rarity: 'common',
-        description: 'Distilled from the last light of dusk, shimmering with arcane energy.',
-        purchased: true,
-      ),
-      ShopItemModel(
-        itemId: 'liquid_blue',
-        name: 'Azure Depths',
-        category: 'liquid',
-        assetKey: 'liquid_1',
-        essenceCost: 30,
-        currencyType: 'essence',
-        rarity: 'common',
-        description: 'The deep blue of forgotten oceans, cool and endlessly calm.',
-      ),
-      ShopItemModel(
-        itemId: 'liquid_teal',
-        name: 'Emerald Tide',
-        category: 'liquid',
-        assetKey: 'liquid_2',
-        essenceCost: 30,
-        currencyType: 'essence',
-        rarity: 'common',
-        description: 'Where sea meets forest — a luminous teal born of two worlds.',
-      ),
-      ShopItemModel(
-        itemId: 'liquid_green',
-        name: 'Verdant Elixir',
-        category: 'liquid',
-        assetKey: 'liquid_3',
-        essenceCost: 30,
-        currencyType: 'essence',
-        rarity: 'common',
-        description: 'Brewed from the heart of an ancient grove, alive with gentle magic.',
-      ),
-      ShopItemModel(
-        itemId: 'liquid_gold',
-        name: 'Liquid Sunlight',
-        category: 'liquid',
-        assetKey: 'liquid_5',
-        essenceCost: 80,
-        currencyType: 'essence',
-        rarity: 'uncommon',
-        description: 'Captured rays of golden dawn, warm to the touch and bright with hope.',
-      ),
-      ShopItemModel(
-        itemId: 'liquid_coral',
-        name: 'Crimson Ember',
-        category: 'liquid',
-        assetKey: 'liquid_4',
-        coinCost: 30,
-        currencyType: 'coins',
-        rarity: 'rare',
-        description: 'A smoldering draught that glows like embers in a dying hearth.',
-      ),
-      ShopItemModel(
-        itemId: 'liquid_pink',
-        name: 'Roseveil Draught',
-        category: 'liquid',
-        assetKey: 'liquid_6',
-        coinCost: 30,
-        currencyType: 'coins',
-        rarity: 'rare',
-        description: 'Petal-soft and blushing, this brew carries the sweetness of enchanted roses.',
-      ),
-
-      // ═══════════════════════════════════
-      // EFFECTS
-      // ═══════════════════════════════════
-      ShopItemModel(
-        itemId: 'effect_glow',
-        name: 'Gentle Glow',
-        category: 'effect',
-        assetKey: 'effect_glow',
-        essenceCost: 100,
-        currencyType: 'essence',
-        rarity: 'uncommon',
-        description: 'A soft, pulsing radiance — like holding a firefly in glass.',
-      ),
-      ShopItemModel(
-        itemId: 'effect_sparkles',
-        name: 'Sparkles',
-        category: 'effect',
-        assetKey: 'effect_sparkles',
-        essenceCost: 150,
-        currencyType: 'essence',
-        rarity: 'rare',
-        description: 'Tiny motes of light dance around the vessel, drawn by its magic.',
-      ),
-      ShopItemModel(
-        itemId: 'effect_smoke',
-        name: 'Mystic Smoke',
-        category: 'effect',
-        assetKey: 'effect_smoke',
-        coinCost: 60,
-        currencyType: 'coins',
-        rarity: 'epic',
-        description: 'Ethereal wisps rise and curl, carrying whispered secrets upward.',
-      ),
-      ShopItemModel(
-        itemId: 'effect_legendary_glow',
-        name: 'Legendary Aura',
-        category: 'effect',
-        assetKey: 'effect_legendary_glow',
-        coinCost: 100,
-        currencyType: 'coins',
+        itemId: 'bottle_celestial',
+        name: 'Celestial Vessel',
+        category: 'bottle',
+        assetKey: 'bottle_celestial',
+        currencyType: 'subscriber_only',
         rarity: 'legendary',
-        description: 'A blazing corona of golden light. Only the most powerful brews emit this.',
+        description: 'Forged in the heart of a dying star. Its glass shifts between dimensions, holding brews that transcend time itself.',
+      ),
+      ShopItemModel(
+        itemId: 'bottle_starforged',
+        name: 'Starforged Vial',
+        category: 'bottle',
+        assetKey: 'bottle_starforged',
+        currencyType: 'subscriber_only',
+        rarity: 'epic',
+        description: 'Hammered from fallen meteors by cosmic smiths. Each facet captures a different constellation.',
       ),
 
       // ═══════════════════════════════════
@@ -389,6 +292,181 @@ class DatabaseHelper {
         rarity: 'epic',
         description: 'Towering shelves of forgotten tomes surround you with the scent of old wisdom.',
       ),
+
+      // ═══════════════════════════════════
+      // BACKGROUNDS (Subscriber Exclusive)
+      // ═══════════════════════════════════
+      ShopItemModel(
+        itemId: 'theme_aurora',
+        name: 'Aurora Borealis',
+        category: 'background',
+        assetKey: 'theme_aurora',
+        currencyType: 'subscriber_only',
+        rarity: 'legendary',
+        description: 'Ribbons of celestial light dance across the arctic sky. Brew beneath the northern lights, where magic is most potent.',
+      ),
+      ShopItemModel(
+        itemId: 'theme_cosmic_void',
+        name: 'Cosmic Void',
+        category: 'background',
+        assetKey: 'theme_cosmic_void',
+        currencyType: 'subscriber_only',
+        rarity: 'epic',
+        description: 'The infinite darkness between galaxies. Here, in the void, your focus becomes absolute — nothing distracts, nothing exists but the brew.',
+      ),
+      ShopItemModel(
+        itemId: 'theme_enchanted_hearth',
+        name: 'Enchanted Hearth',
+        category: 'background',
+        assetKey: 'theme_enchanted_hearth',
+        currencyType: 'subscriber_only',
+        rarity: 'rare',
+        description: 'A cozy witch\'s cottage with a crackling magical fireplace. Warm, inviting, and infused with ancient protection spells.',
+      ),
+
+      // ═══════════════════════════════════
+      // LIQUIDS (Essence — F2P progression)
+      // ═══════════════════════════════════
+      ShopItemModel(
+        itemId: 'liquid_twilight_essence',
+        name: 'Twilight Essence',
+        category: 'liquid',
+        assetKey: 'liquid_0',
+        essenceCost: 50,
+        currencyType: 'essence',
+        rarity: 'common',
+        description: 'The quiet hue of dusk distilled into liquid form. A dependable base for any brew.',
+      ),
+      ShopItemModel(
+        itemId: 'liquid_azure_depths',
+        name: 'Azure Depths',
+        category: 'liquid',
+        assetKey: 'liquid_1',
+        essenceCost: 50,
+        currencyType: 'essence',
+        rarity: 'common',
+        description: 'Deep ocean blue captured in a vial. Cool, calm, and endlessly deep.',
+      ),
+      ShopItemModel(
+        itemId: 'liquid_emerald_tide',
+        name: 'Emerald Tide',
+        category: 'liquid',
+        assetKey: 'liquid_2',
+        essenceCost: 75,
+        currencyType: 'essence',
+        rarity: 'uncommon',
+        description: 'Green as a forest canopy at midday. This liquid pulses with natural energy.',
+      ),
+      ShopItemModel(
+        itemId: 'liquid_crimson_ember',
+        name: 'Crimson Ember',
+        category: 'liquid',
+        assetKey: 'liquid_4',
+        essenceCost: 100,
+        currencyType: 'essence',
+        rarity: 'uncommon',
+        description: 'A smoldering red that never quite cools. Handle with intent.',
+      ),
+      ShopItemModel(
+        itemId: 'liquid_golden_dawn',
+        name: 'Golden Dawn',
+        category: 'liquid',
+        assetKey: 'liquid_5',
+        essenceCost: 125,
+        currencyType: 'essence',
+        rarity: 'rare',
+        description: 'Captured from the first light of sunrise. Warm, hopeful, and radiant.',
+      ),
+      ShopItemModel(
+        itemId: 'liquid_violet_dusk',
+        name: 'Violet Dusk',
+        category: 'liquid',
+        assetKey: 'liquid_6',
+        essenceCost: 150,
+        currencyType: 'essence',
+        rarity: 'rare',
+        description: 'The last color before nightfall. Rich, mysterious, and contemplative.',
+      ),
+
+      // ═══════════════════════════════════
+      // EFFECTS (Essence — F2P progression)
+      // ═══════════════════════════════════
+      ShopItemModel(
+        itemId: 'effect_glow_item',
+        name: 'Glow Effect',
+        category: 'effect',
+        assetKey: 'effect_glow',
+        essenceCost: 75,
+        currencyType: 'essence',
+        rarity: 'uncommon',
+        description: 'A subtle luminescence that makes any potion shine from within.',
+      ),
+      ShopItemModel(
+        itemId: 'effect_sparkle_item',
+        name: 'Sparkle Effect',
+        category: 'effect',
+        assetKey: 'effect_sparkles',
+        essenceCost: 100,
+        currencyType: 'essence',
+        rarity: 'rare',
+        description: 'Tiny points of light dance around your brew like captured starlight.',
+      ),
+      ShopItemModel(
+        itemId: 'effect_shimmer_item',
+        name: 'Shimmer Effect',
+        category: 'effect',
+        assetKey: 'effect_smoke',
+        essenceCost: 150,
+        currencyType: 'essence',
+        rarity: 'epic',
+        description: 'Wisps of ethereal smoke rise from your potion, carrying whispers of power.',
+      ),
+
+      // ═══════════════════════════════════
+      // EFFECTS (Subscriber Exclusive)
+      // ═══════════════════════════════════
+      ShopItemModel(
+        itemId: 'effect_cosmic_trail',
+        name: 'Cosmic Trail',
+        category: 'effect',
+        assetKey: 'effect_legendary_glow',
+        currencyType: 'subscriber_only',
+        rarity: 'legendary',
+        description: 'A trail of cosmic particles orbits your brew, bending light and time around it.',
+      ),
+      ShopItemModel(
+        itemId: 'effect_ethereal_glow',
+        name: 'Ethereal Glow',
+        category: 'effect',
+        assetKey: 'effect_legendary_glow',
+        currencyType: 'subscriber_only',
+        rarity: 'epic',
+        description: 'An otherworldly luminescence that transcends the physical realm.',
+      ),
+
+      // ═══════════════════════════════════
+      // BACKGROUNDS (moved to Essence from Coins for F2P balance)
+      // ═══════════════════════════════════
+      ShopItemModel(
+        itemId: 'theme_forest_essence',
+        name: 'Enchanted Forest',
+        category: 'background',
+        assetKey: 'theme_forest',
+        essenceCost: 200,
+        currencyType: 'essence',
+        rarity: 'rare',
+        description: 'Brew beneath a canopy of whispering leaves and emerald light. (Essence Edition)',
+      ),
+      ShopItemModel(
+        itemId: 'theme_night_sky_essence',
+        name: 'Night Sky',
+        category: 'background',
+        assetKey: 'theme_night_sky',
+        essenceCost: 200,
+        currencyType: 'essence',
+        rarity: 'rare',
+        description: 'A thousand twinkling stars witness your craft from above. (Essence Edition)',
+      ),
     ];
 
     await _isar!.writeTxn(() async {
@@ -403,36 +481,218 @@ class DatabaseHelper {
     if (recipesCount > 0) return;
 
     final defaultRecipes = [
-      // ═══ COMMON ═══
+      // ═══════════════════════════════════════
+      // LIQUID RECIPES — Common (4)
+      // ═══════════════════════════════════════
       RecipeModel(
-        recipeId: 'recipe_first_brew',
-        name: 'First Brew',
-        unlockCondition: '{"type": "potion_count", "value": 1}',
+        recipeId: 'recipe_twilight_essence',
+        name: 'Twilight Essence',
+        unlockCondition: '{"type": "total_time", "minutes": 10}',
         rewardType: 'liquid',
-        rewardAssetKey: 'liquid_2',
+        rewardAssetKey: 'liquid_0',
         rarity: 'common',
-        lore: 'Every alchemist remembers the trembling hands, the uncertain flame, and the moment their first potion shimmered to life. This is where your story begins.',
+        lore: 'The first color any alchemist learns to coax from silence — ten minutes of stillness, and twilight bleeds into the glass.',
       ),
       RecipeModel(
-        recipeId: 'recipe_patient_drop',
-        name: 'The Patient Drop',
-        unlockCondition: '{"type": "total_time", "minutes": 30}',
+        recipeId: 'recipe_azure_depths',
+        name: 'Azure Depths',
+        unlockCondition: '{"type": "potion_count", "value": 1}',
         rewardType: 'liquid',
         rewardAssetKey: 'liquid_1',
         rarity: 'common',
-        lore: 'Half an hour of stillness yields a single, perfect drop. In patience, the alchemist finds their first true ingredient.',
+        lore: 'Your first brew. Trembling hands, uncertain flame, and a single shimmering drop of blue. This is where every journey begins.',
+      ),
+      RecipeModel(
+        recipeId: 'recipe_emerald_tide',
+        name: 'Emerald Tide',
+        unlockCondition: '{"type": "potion_count", "value": 3}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_2',
+        rarity: 'common',
+        lore: 'Three potions in, the cauldron remembers your touch. The teal deepens, the craft steadies.',
+      ),
+      RecipeModel(
+        recipeId: 'recipe_hearthglow',
+        name: 'Hearthglow',
+        unlockCondition: '{"type": "total_time", "minutes": 30}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_3',
+        rarity: 'common',
+        lore: 'Half an hour of patience yields warmth itself — green as a hearth flame, gentle as a whispered promise.',
       ),
 
-      // ═══ UNCOMMON ═══
+      // ═══════════════════════════════════════
+      // LIQUID RECIPES — Uncommon (5)
+      // ═══════════════════════════════════════
       RecipeModel(
-        recipeId: 'recipe_kindled_spirit',
-        name: 'Kindled Spirit',
+        recipeId: 'recipe_crimson_ember',
+        name: 'Crimson Ember',
         unlockCondition: '{"type": "potion_count", "value": 5}',
         rewardType: 'liquid',
         rewardAssetKey: 'liquid_4',
         rarity: 'uncommon',
-        lore: 'Five flames lit, five potions born. The spark of habit catches, and your cauldron glows with a warmth that was not there before.',
+        lore: 'Five flames lit, five intentions set. The red of this brew shifts like embers, never quite still, never quite tame.',
       ),
+      RecipeModel(
+        recipeId: 'recipe_liquid_sunlight',
+        name: 'Liquid Sunlight',
+        unlockCondition: '{"type": "time_of_day", "after": "05:00", "before": "07:00", "sessions": 3}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_5',
+        rarity: 'uncommon',
+        lore: 'Before the world stirs, you are already at work. The golden light of dawn lives in this vial — warm, hopeful, alive.',
+      ),
+      RecipeModel(
+        recipeId: 'recipe_lavender_mist',
+        name: 'Lavender Mist',
+        unlockCondition: '{"type": "streak", "days": 3}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_6',
+        rarity: 'uncommon',
+        lore: 'Three days without faltering. A soft purple haze rises from the brew — the color of discipline just beginning to bloom.',
+      ),
+      RecipeModel(
+        recipeId: 'recipe_amber_dew',
+        name: 'Amber Dew',
+        unlockCondition: '{"type": "total_time", "minutes": 120}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_7',
+        rarity: 'uncommon',
+        lore: 'Two hours of accumulated silence. Amber pools at the bottom of the flask, rich with the weight of time well spent.',
+      ),
+      RecipeModel(
+        recipeId: 'recipe_jade_whisper',
+        name: 'Jade Whisper',
+        unlockCondition: '{"type": "potion_count", "value": 10}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_8',
+        rarity: 'uncommon',
+        lore: 'Ten brews deep, and the cauldron speaks back. This jade elixir carries the quiet confidence of a practiced hand.',
+      ),
+
+      // ═══════════════════════════════════════
+      // LIQUID RECIPES — Rare (5)
+      // ═══════════════════════════════════════
+      RecipeModel(
+        recipeId: 'recipe_roseveil',
+        name: 'Roseveil Draught',
+        unlockCondition: '{"type": "potion_count", "value": 20}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_9',
+        rarity: 'rare',
+        lore: 'Twenty potions line your shelf, and something new emerges — pink as the first blush of a rose, delicate yet undeniable.',
+      ),
+      RecipeModel(
+        recipeId: 'recipe_midnight_oil',
+        name: 'Midnight Oil',
+        unlockCondition: '{"type": "time_of_day", "after": "22:00", "sessions": 10}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_10',
+        rarity: 'rare',
+        lore: 'When the world sleeps, you work. Ten midnight sessions yield this violet draught that glows faintly in darkness.',
+      ),
+      RecipeModel(
+        recipeId: 'recipe_frostbloom',
+        name: 'Frostbloom Nectar',
+        unlockCondition: '{"type": "session_duration", "minutes": 45}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_11',
+        rarity: 'rare',
+        lore: 'Forty-five unbroken minutes — the threshold where distraction dies and true concentration crystallizes like frost on glass.',
+      ),
+      RecipeModel(
+        recipeId: 'recipe_oceans_memory',
+        name: "Ocean's Memory",
+        unlockCondition: '{"type": "streak", "days": 7}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_12',
+        rarity: 'rare',
+        lore: 'Seven days, seven tides. Consistency pulls you deeper into the craft, and this blue carries the weight of the deep.',
+      ),
+      RecipeModel(
+        recipeId: 'recipe_autumn_blaze',
+        name: 'Autumn Blaze',
+        unlockCondition: '{"type": "time_of_day", "after": "17:00", "before": "19:00", "sessions": 5}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_13',
+        rarity: 'rare',
+        lore: 'Brewed in the golden hour, when shadows stretch long and the day surrenders. Five sunset sessions yield fire in a bottle.',
+      ),
+
+      // ═══════════════════════════════════════
+      // LIQUID RECIPES — Epic (4)
+      // ═══════════════════════════════════════
+      RecipeModel(
+        recipeId: 'recipe_dragons_blood',
+        name: "Dragon's Blood",
+        unlockCondition: '{"type": "compound", "conditions": [{"type": "potion_count", "value": 50}, {"type": "total_time", "minutes": 500}]}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_14',
+        rarity: 'epic',
+        lore: 'Fifty brews and five hundred minutes of fire. The cauldron runs red — not with anger, but with the fierce patience of something ancient waking.',
+      ),
+      RecipeModel(
+        recipeId: 'recipe_starweavers_ink',
+        name: "Starweaver's Ink",
+        unlockCondition: '{"type": "compound", "conditions": [{"type": "streak", "days": 14}, {"type": "potion_count", "value": 25}]}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_15',
+        rarity: 'epic',
+        lore: 'A fortnight\'s devotion and twenty-five bottles strong. The ink of the starweavers drips slow, dark as the space between constellations, flecked with gold.',
+      ),
+      RecipeModel(
+        recipeId: 'recipe_phantom_mist',
+        name: 'Phantom Mist',
+        unlockCondition: '{"type": "compound", "conditions": [{"type": "time_of_day", "after": "00:00", "before": "03:00", "sessions": 15}, {"type": "potion_count", "value": 35}, {"type": "total_time", "minutes": 600}]}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_16',
+        rarity: 'epic',
+        lore: 'Fifteen vigils between midnight and the witching hour, thirty-five brews deep, ten hours of silence. Only those who walk the boundary of waking and dreaming can distill this silver fog.',
+      ),
+      RecipeModel(
+        recipeId: 'recipe_molten_core',
+        name: 'Molten Core',
+        unlockCondition: '{"type": "compound", "conditions": [{"type": "session_duration", "minutes": 120}, {"type": "potion_count", "value": 40}, {"type": "streak", "days": 10}]}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_17',
+        rarity: 'epic',
+        lore: 'Two hours of unbroken will, forty brews forged, ten days of relentless flame. What remains is not patience — it is something molten, something that refuses to cool.',
+      ),
+
+      // ═══════════════════════════════════════
+      // LIQUID RECIPES — Legendary (3)
+      // ═══════════════════════════════════════
+      RecipeModel(
+        recipeId: 'recipe_phoenix_tears',
+        name: 'Phoenix Tears',
+        unlockCondition: '{"type": "compound", "conditions": [{"type": "streak", "days": 30}, {"type": "potion_count", "value": 100}, {"type": "total_time", "minutes": 3000}]}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_18',
+        rarity: 'legendary',
+        lore: 'A month of unbroken fire, a hundred potions, three thousand minutes of absolute devotion. The phoenix does not weep for the weak — these tears are for the relentless.',
+      ),
+      RecipeModel(
+        recipeId: 'recipe_void_ichor',
+        name: 'Void Ichor',
+        unlockCondition: '{"type": "compound", "conditions": [{"type": "potion_count", "value": 200}, {"type": "streak", "days": 50}]}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_19',
+        rarity: 'legendary',
+        lore: 'Two hundred brews. Fifty days of flame that never died. From the void between stars comes this — not light, not dark, but the space where intention becomes infinite.',
+      ),
+      RecipeModel(
+        recipeId: 'recipe_celestial_ambrosia',
+        name: 'Celestial Ambrosia',
+        unlockCondition: '{"type": "compound", "conditions": [{"type": "session_duration", "minutes": 120}, {"type": "rarity_count", "rarity": "legendary", "count": 5}, {"type": "total_time", "minutes": 5000}]}',
+        rewardType: 'liquid',
+        rewardAssetKey: 'liquid_20',
+        rarity: 'legendary',
+        lore: 'Two hours of unbroken focus. Five legendary potions. Five thousand minutes of accumulated mastery. The gods do not share their nectar lightly — but you have earned your seat at the table.',
+      ),
+
+      // ═══════════════════════════════════════
+      // EFFECT RECIPES (kept from original)
+      // ═══════════════════════════════════════
       RecipeModel(
         recipeId: 'recipe_marathon_brewer',
         name: 'Marathon Brewer',
@@ -443,17 +703,6 @@ class DatabaseHelper {
         lore: 'Ten hours of focus is no small feat. Your cauldron hums with accumulated intention, and tiny sparks of magic begin to dance.',
       ),
       RecipeModel(
-        recipeId: 'recipe_dawn_whisper',
-        name: 'Dawn Whisper',
-        unlockCondition: '{"type": "time_of_day", "after": "05:00", "before": "07:00", "sessions": 3}',
-        rewardType: 'liquid',
-        rewardAssetKey: 'liquid_5',
-        rarity: 'uncommon',
-        lore: 'Before the world stirs, you are already brewing. The golden light of early morning infuses this potion with quiet resolve.',
-      ),
-
-      // ═══ RARE ═══
-      RecipeModel(
         recipeId: 'recipe_consistency_brew',
         name: 'Consistency Brew',
         unlockCondition: '{"type": "streak", "days": 7}',
@@ -463,63 +712,23 @@ class DatabaseHelper {
         lore: 'Seven days, seven brews, not one missed. Consistency is the quiet spell that transforms ordinary effort into something luminous.',
       ),
       RecipeModel(
-        recipeId: 'recipe_midnight_oil',
-        name: 'Midnight Oil',
-        unlockCondition: '{"type": "time_of_day", "after": "22:00", "sessions": 10}',
-        rewardType: 'liquid',
-        rewardAssetKey: 'liquid_7',
-        rarity: 'rare',
-        lore: 'When the world sleeps, the night-brewers work. Ten sessions under starlight yield this dark, iridescent liquid that glows faintly in the dark.',
-      ),
-      RecipeModel(
-        recipeId: 'recipe_deep_focus',
-        name: 'Deep Focus Draught',
-        unlockCondition: '{"type": "session_duration", "minutes": 45}',
-        rewardType: 'liquid',
-        rewardAssetKey: 'liquid_3',
-        rarity: 'rare',
-        lore: 'Forty-five unbroken minutes — the threshold where distraction fades and true concentration crystallizes into something potent.',
-      ),
-      RecipeModel(
-        recipeId: 'recipe_gatherers_bounty',
-        name: "Gatherer's Bounty",
-        unlockCondition: '{"type": "potion_count", "value": 25}',
-        rewardType: 'liquid',
-        rewardAssetKey: 'liquid_8',
-        rarity: 'rare',
-        lore: 'Twenty-five potions line your shelves, each one a captured moment of intent. Your collection whispers of dedication.',
-      ),
-
-      // ═══ EPIC ═══
-      RecipeModel(
         recipeId: 'recipe_rising_mist',
         name: 'Rising Mist',
-        unlockCondition: '{"type": "total_time", "minutes": 1500}',
+        unlockCondition: '{"type": "compound", "conditions": [{"type": "total_time", "minutes": 2500}, {"type": "streak", "days": 14}, {"type": "potion_count", "value": 40}]}',
         rewardType: 'effect',
         rewardAssetKey: 'effect_smoke',
         rarity: 'epic',
-        lore: 'Twenty-five hours of alchemy. Your dedication rises like morning mist from a forest floor — quiet, persistent, and impossible to ignore.',
+        lore: 'Forty brews, two weeks unbroken, forty hours of silence. Your dedication rises like morning mist from a forest floor — quiet, persistent, and impossible to ignore.',
       ),
       RecipeModel(
         recipeId: 'recipe_ironwill_tonic',
         name: 'Ironwill Tonic',
-        unlockCondition: '{"type": "session_duration", "minutes": 90}',
+        unlockCondition: '{"type": "compound", "conditions": [{"type": "session_duration", "minutes": 120}, {"type": "potion_count", "value": 30}]}',
         rewardType: 'effect',
         rewardAssetKey: 'effect_smoke',
         rarity: 'epic',
-        lore: 'Ninety minutes of unbroken resolve. The iron in your will has tempered into something unshakable, and this brew carries its weight.',
+        lore: 'Two hours of unbroken resolve and thirty brews behind you. The iron in your will has tempered into something unshakable, and this brew carries its weight.',
       ),
-      RecipeModel(
-        recipeId: 'recipe_century_mark',
-        name: 'The Century Mark',
-        unlockCondition: '{"type": "potion_count", "value": 100}',
-        rewardType: 'liquid',
-        rewardAssetKey: 'liquid_9',
-        rarity: 'epic',
-        lore: 'One hundred brews. Each one a step on a path that most never walk this far. The liquid shimmers with the weight of a hundred intentions.',
-      ),
-
-      // ═══ LEGENDARY ═══
       RecipeModel(
         recipeId: 'recipe_eternal_ember',
         name: 'Eternal Ember',

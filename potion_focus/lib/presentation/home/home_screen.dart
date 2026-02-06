@@ -5,9 +5,10 @@ import 'package:potion_focus/presentation/home/widgets/brew_setup_sheet.dart';
 import 'package:potion_focus/presentation/home/widgets/completion_modal.dart';
 import 'package:potion_focus/presentation/settings/settings_screen.dart';
 import 'package:potion_focus/presentation/shared/painting/background_themes.dart';
-import 'package:potion_focus/presentation/shared/widgets/background_theme_picker.dart';
 import 'package:potion_focus/services/timer_service.dart';
 import 'package:potion_focus/services/theme_service.dart';
+import 'package:potion_focus/services/upgrade_prompt_service.dart';
+import 'package:potion_focus/presentation/shared/widgets/upgrade_prompt_modal.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -23,6 +24,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   List<String> _selectedTags = [];
   String _selectedBottle = 'bottle_round';
   String _selectedLiquid = 'liquid_0';
+  bool _isFreeForm = false;
 
   late AnimationController _bgAnimController;
 
@@ -49,19 +51,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       initialTags: _selectedTags,
       initialBottle: _selectedBottle,
       initialLiquid: _selectedLiquid,
-      onStartBrewing: (duration, tags, bottle, liquid) {
+      initialIsFreeForm: _isFreeForm,
+      onStartBrewing: (duration, tags, bottle, liquid, {bool isFreeForm = false}) {
         setState(() {
           _selectedDuration = duration;
           _selectedTags = tags;
           _selectedBottle = bottle;
           _selectedLiquid = liquid;
+          _isFreeForm = isFreeForm;
         });
-        ref.read(timerServiceProvider.notifier).startTimer(
-              Duration(minutes: duration),
-              tags,
-              selectedBottle: bottle,
-              selectedLiquid: liquid,
-            );
+        if (isFreeForm) {
+          ref.read(timerServiceProvider.notifier).startFreeFormSession(
+                tags,
+                selectedBottle: bottle,
+                selectedLiquid: liquid,
+              );
+        } else {
+          ref.read(timerServiceProvider.notifier).startTimer(
+                Duration(minutes: duration),
+                tags,
+                selectedBottle: bottle,
+                selectedLiquid: liquid,
+              );
+        }
       },
     );
   }
@@ -85,11 +97,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         elevation: 0,
         backgroundColor: Colors.transparent,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.wallpaper_outlined, color: Colors.white70),
-            tooltip: 'Background Theme',
-            onPressed: () => showBackgroundThemePicker(context, ref),
-          ),
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.white70),
             onPressed: () {

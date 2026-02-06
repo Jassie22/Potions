@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potion_focus/core/config/app_constants.dart';
 import 'package:potion_focus/core/utils/helpers.dart';
@@ -6,8 +7,13 @@ import 'package:potion_focus/data/local/database.dart';
 import 'package:potion_focus/data/local/isar_helpers.dart';
 import 'package:potion_focus/data/models/quest_model.dart';
 import 'package:potion_focus/data/models/tag_stats_model.dart';
+import 'package:potion_focus/services/essence_service.dart';
+import 'package:potion_focus/services/coin_service.dart';
+import 'dart:math';
 
 class QuestGenerationService {
+  final Ref ref;
+  QuestGenerationService(this.ref);
   Future<void> generateDailyQuest() async {
     final db = DatabaseHelper.instance;
 
@@ -34,18 +40,30 @@ class QuestGenerationService {
 
     final topTag = topTags.first;
 
-    // Randomly select quest type based on weights
-    final questType = Helpers.weightedRandom(AppConstants.questTypeWeights);
+    // Get existing active quest types for this timeframe to avoid duplicates
+    final existingTypes = allQuests
+        .where((q) => q.timeframe == 'daily' && q.status == 'active')
+        .map((q) => q.questType)
+        .toSet();
+
+    // Filter out already-used quest types
+    final availableTypes = ['time_based', 'session_based', 'streak_based']
+        .where((t) => !existingTypes.contains(t))
+        .toList();
+
+    if (availableTypes.isEmpty) {
+      debugPrint('All daily quest types already in use');
+      return; // All types used
+    }
+
+    // Randomly select from available quest types
+    final questType = Helpers.randomElement(availableTypes);
 
     // Calculate target value based on quest type
     final targetValue = _calculateDailyTarget(topTag, questType);
 
-    // Calculate essence reward
-    final essenceReward = _calculateEssenceReward(
-      targetValue,
-      AppConstants.dailyQuestEssenceBonus,
-      questType,
-    );
+    // Calculate rewards
+    final rewards = _calculateRewards(targetValue, questType, 'daily');
 
     // Create quest
     final now = DateTime.now();
@@ -57,7 +75,8 @@ class QuestGenerationService {
       targetValue: targetValue,
       currentProgress: 0,
       status: 'active',
-      essenceReward: essenceReward,
+      essenceReward: rewards.essence,
+      coinReward: rewards.coins,
       generatedAt: now,
       expiresAt: now.add(const Duration(days: 1)).endOfDay(),
     );
@@ -104,12 +123,8 @@ class QuestGenerationService {
       // Weekly quests are always time-based
       final targetValue = _calculateWeeklyTarget(tagStats);
 
-      // Calculate essence reward
-      final essenceReward = _calculateEssenceReward(
-        targetValue,
-        AppConstants.weeklyQuestEssenceBonus,
-        'time_based',
-      );
+      // Calculate rewards (weekly quests have higher coin chance)
+      final rewards = _calculateRewards(targetValue, 'time_based', 'weekly');
 
       // Create quest
       final now = DateTime.now();
@@ -121,7 +136,8 @@ class QuestGenerationService {
         targetValue: targetValue,
         currentProgress: 0,
         status: 'active',
-        essenceReward: essenceReward,
+        essenceReward: rewards.essence,
+        coinReward: rewards.coins,
         generatedAt: now,
         expiresAt: _getEndOfWeek(),
       );
@@ -167,16 +183,70 @@ class QuestGenerationService {
           break;
       }
 
-      // Check if quest is complete
-      if (quest.currentProgress >= quest.targetValue) {
+      // Check if quest is complete (only award once, when status changes)
+      if (quest.currentProgress >= quest.targetValue && quest.status != 'completed') {
         quest.status = 'completed';
         quest.completedAt = DateTime.now();
-      }
 
-      await db.writeTxn(() async {
-        await db.questModels.put(quest);
-      });
+        // Save completed status FIRST to prevent double-award on crash (bug 1.4)
+        await db.writeTxn(() async {
+          await db.questModels.put(quest);
+        });
+
+        // THEN award essence and coins using ref.read() (not new instances)
+        try {
+          await ref.read(essenceServiceProvider).addEssence(quest.essenceReward);
+          debugPrint('Quest completed! Awarded ${quest.essenceReward} essence for quest: ${quest.questType}');
+
+          if (quest.coinReward > 0) {
+            await ref.read(coinServiceProvider).addCoins(quest.coinReward);
+            debugPrint('Quest bonus! Awarded ${quest.coinReward} coins');
+          }
+        } catch (e) {
+          debugPrint('Failed to award rewards for quest ${quest.questId}: $e');
+        }
+      } else {
+        // Save progress update
+        await db.writeTxn(() async {
+          await db.questModels.put(quest);
+        });
+      }
     }
+  }
+
+  Future<void> createCustomQuest({
+    required String tag,
+    required String questType,
+    required int targetValue,
+    required String timeframe,
+  }) async {
+    final db = DatabaseHelper.instance;
+    final now = DateTime.now();
+
+    final expiresAt = timeframe == 'daily'
+        ? now.add(const Duration(days: 1)).endOfDay()
+        : _getEndOfWeek();
+
+    final rewards = _calculateRewards(targetValue, questType, timeframe);
+
+    final quest = QuestModel(
+      questId: Helpers.generateId(),
+      tag: tag,
+      questType: questType,
+      timeframe: timeframe,
+      targetValue: targetValue,
+      currentProgress: 0,
+      status: 'active',
+      essenceReward: rewards.essence,
+      coinReward: rewards.coins,
+      isCustom: true,
+      generatedAt: now,
+      expiresAt: expiresAt,
+    );
+
+    await db.writeTxn(() async {
+      await db.questModels.put(quest);
+    });
   }
 
   Future<void> expireOldQuests() async {
@@ -224,24 +294,45 @@ class QuestGenerationService {
     return Helpers.clamp(target, 60, 600); // Between 1 and 10 hours
   }
 
-  int _calculateEssenceReward(int targetValue, double bonusMultiplier, String questType) {
-    int baseReward;
+  /// Calculate both essence and coin rewards based on quest parameters.
+  /// Coin rewards are rare - only for challenging quests with some randomness.
+  ({int essence, int coins}) _calculateRewards(int targetValue, String questType, String timeframe) {
+    int baseEssence;
+    int coins = 0;
 
     switch (questType) {
       case 'time_based':
-        baseReward = (targetValue / 5).round(); // 1 essence per 5 minutes
+        // 1 essence per 2 minutes (increased from 1 per 5)
+        baseEssence = (targetValue / 2).round();
+        // Coin bonus for challenging weekly time quests (180+ min = 3 hours)
+        if (timeframe == 'weekly' && targetValue >= 180) {
+          coins = Random().nextInt(100) < 30 ? 3 : 0; // 30% chance for 3 coins
+        }
         break;
       case 'session_based':
-        baseReward = targetValue * 10; // 10 essence per session
+        // 15 essence per session (increased from 10)
+        baseEssence = targetValue * 15;
+        // Coins for weekly multi-session quests (5+ sessions)
+        if (timeframe == 'weekly' && targetValue >= 5) {
+          coins = Random().nextInt(100) < 25 ? 5 : 0; // 25% chance for 5 coins
+        }
         break;
       case 'streak_based':
-        baseReward = 20; // Fixed reward
+        baseEssence = 25; // Increased from 20
+        // Small chance for coins on streak quests
+        if (timeframe == 'weekly') {
+          coins = Random().nextInt(100) < 20 ? 2 : 0; // 20% chance for 2 coins
+        }
         break;
       default:
-        baseReward = 10;
+        baseEssence = 10;
     }
 
-    return (baseReward * bonusMultiplier).round();
+    // Apply timeframe multiplier to essence
+    final essenceMultiplier = timeframe == 'weekly' ? 2.0 : 1.5;
+    final finalEssence = (baseEssence * essenceMultiplier).round();
+
+    return (essence: finalEssence, coins: coins);
   }
 
   DateTime _getEndOfWeek() {
@@ -253,7 +344,7 @@ class QuestGenerationService {
 }
 
 final questGenerationServiceProvider = Provider<QuestGenerationService>((ref) {
-  return QuestGenerationService();
+  return QuestGenerationService(ref);
 });
 
 // Provider for active quests

@@ -6,6 +6,7 @@ import 'package:potion_focus/presentation/home/widgets/bottle_selector.dart';
 import 'package:potion_focus/presentation/home/widgets/liquid_selector.dart';
 import 'package:potion_focus/presentation/home/widgets/tag_selector.dart';
 import 'package:potion_focus/services/feedback_service.dart';
+import 'package:potion_focus/services/timer_service.dart';
 
 /// Bottom sheet for brew setup - contains duration, tags, and appearance selectors.
 /// Opens when user taps "Start Brewing" on the clean home screen.
@@ -14,7 +15,8 @@ class BrewSetupSheet extends ConsumerStatefulWidget {
   final List<String> initialTags;
   final String initialBottle;
   final String initialLiquid;
-  final void Function(int duration, List<String> tags, String bottle, String liquid) onStartBrewing;
+  final bool initialIsFreeForm;
+  final void Function(int duration, List<String> tags, String bottle, String liquid, {bool isFreeForm}) onStartBrewing;
 
   const BrewSetupSheet({
     super.key,
@@ -22,6 +24,7 @@ class BrewSetupSheet extends ConsumerStatefulWidget {
     required this.initialTags,
     required this.initialBottle,
     required this.initialLiquid,
+    this.initialIsFreeForm = false,
     required this.onStartBrewing,
   });
 
@@ -34,7 +37,8 @@ class _BrewSetupSheetState extends ConsumerState<BrewSetupSheet> {
   late List<String> _selectedTags;
   late String _selectedBottle;
   late String _selectedLiquid;
-  bool _showAppearance = false;
+  late bool _isFreeForm;
+  bool _showAppearance = true;
   bool _showCustomDuration = false;
   final TextEditingController _customDurationController = TextEditingController();
 
@@ -45,6 +49,7 @@ class _BrewSetupSheetState extends ConsumerState<BrewSetupSheet> {
     _selectedTags = List.from(widget.initialTags);
     _selectedBottle = widget.initialBottle;
     _selectedLiquid = widget.initialLiquid;
+    _isFreeForm = widget.initialIsFreeForm;
   }
 
   @override
@@ -182,9 +187,10 @@ class _BrewSetupSheetState extends ConsumerState<BrewSetupSheet> {
           runSpacing: 10,
           children: [
             ...AppConstants.timerPresets.map((duration) =>
-              _buildDurationChip(duration, _selectedDuration == duration),
+              _buildDurationChip(duration, !_isFreeForm && _selectedDuration == duration),
             ),
             _buildCustomDurationChip(),
+            _buildFreeFormChip(),
           ],
         ),
         if (_showCustomDuration) ...[
@@ -219,6 +225,30 @@ class _BrewSetupSheetState extends ConsumerState<BrewSetupSheet> {
             ],
           ),
         ],
+        if (_isFreeForm) ...[
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.epic.withOpacity(0.15),
+              border: Border.all(color: AppColors.epic, width: 2),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.all_inclusive, color: AppColors.epic, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Focus freely for up to ${freeFormMaxMinutes ~/ 60} hours. End anytime (min ${freeFormMinMinutes} min for a valid potion).',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.epic,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -229,6 +259,7 @@ class _BrewSetupSheetState extends ConsumerState<BrewSetupSheet> {
         ref.read(feedbackServiceProvider).haptic(HapticType.light);
         setState(() {
           _selectedDuration = duration;
+          _isFreeForm = false;
           _showCustomDuration = false;
         });
       },
@@ -256,12 +287,15 @@ class _BrewSetupSheetState extends ConsumerState<BrewSetupSheet> {
   }
 
   Widget _buildCustomDurationChip() {
-    final isCustom = !AppConstants.timerPresets.contains(_selectedDuration);
+    final isCustom = !_isFreeForm && !AppConstants.timerPresets.contains(_selectedDuration);
 
     return GestureDetector(
       onTap: () {
         ref.read(feedbackServiceProvider).haptic(HapticType.light);
-        setState(() => _showCustomDuration = true);
+        setState(() {
+          _isFreeForm = false;
+          _showCustomDuration = true;
+        });
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
@@ -289,6 +323,49 @@ class _BrewSetupSheetState extends ConsumerState<BrewSetupSheet> {
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: isCustom ? Colors.white : null,
                     fontWeight: isCustom ? FontWeight.w700 : FontWeight.w500,
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFreeFormChip() {
+    return GestureDetector(
+      onTap: () {
+        ref.read(feedbackServiceProvider).haptic(HapticType.light);
+        setState(() {
+          _isFreeForm = true;
+          _showCustomDuration = false;
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: _isFreeForm
+              ? AppColors.epic
+              : Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: _isFreeForm ? Colors.black87 : Colors.black54,
+            width: 2,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.all_inclusive,
+              size: 14,
+              color: _isFreeForm ? Colors.white : AppColors.epic,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              'Free-Form',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: _isFreeForm ? Colors.white : null,
+                    fontWeight: _isFreeForm ? FontWeight.w700 : FontWeight.w500,
                   ),
             ),
           ],
@@ -411,6 +488,9 @@ class _BrewSetupSheetState extends ConsumerState<BrewSetupSheet> {
   }
 
   Widget _buildBeginBrewingButton() {
+    final buttonText = _isFreeForm ? 'Start Free-Form Session' : 'Begin Brewing';
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
     return GestureDetector(
       onTap: _canStartBrewing
           ? () {
@@ -423,17 +503,32 @@ class _BrewSetupSheetState extends ConsumerState<BrewSetupSheet> {
                 _selectedTags,
                 _selectedBottle,
                 _selectedLiquid,
+                isFreeForm: _isFreeForm,
               );
               Navigator.of(context).pop();
             }
           : null,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(vertical: 18),
+        padding: const EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
-          color: _canStartBrewing
-              ? Theme.of(context).colorScheme.primary
-              : Colors.grey.shade700,
+          // Stepped/banded gradient for pixel-art aesthetic (no smooth gradients)
+          gradient: _canStartBrewing
+              ? LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color.lerp(primaryColor, Colors.white, 0.15)!,
+                    Color.lerp(primaryColor, Colors.white, 0.15)!,
+                    primaryColor,
+                    primaryColor,
+                    Color.lerp(primaryColor, Colors.black, 0.2)!,
+                    Color.lerp(primaryColor, Colors.black, 0.2)!,
+                  ],
+                  stops: const [0.0, 0.33, 0.33, 0.66, 0.66, 1.0],
+                )
+              : null,
+          color: _canStartBrewing ? null : Colors.grey.shade700,
           border: Border.all(
             color: _canStartBrewing ? Colors.black87 : Colors.black54,
             width: 3,
@@ -443,16 +538,17 @@ class _BrewSetupSheetState extends ConsumerState<BrewSetupSheet> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.play_arrow,
+              Icons.science,
               color: _canStartBrewing ? Colors.white : Colors.grey.shade500,
-              size: 24,
+              size: 28,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
             Text(
-              'Begin Brewing',
+              buttonText,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: _canStartBrewing ? Colors.white : Colors.grey.shade500,
                     fontWeight: FontWeight.w700,
+                    letterSpacing: 1.0,
                   ),
             ),
           ],
@@ -470,7 +566,8 @@ Future<void> showBrewSetupSheet({
   required List<String> initialTags,
   required String initialBottle,
   required String initialLiquid,
-  required void Function(int duration, List<String> tags, String bottle, String liquid) onStartBrewing,
+  bool initialIsFreeForm = false,
+  required void Function(int duration, List<String> tags, String bottle, String liquid, {bool isFreeForm}) onStartBrewing,
 }) {
   return showModalBottomSheet(
     context: context,
@@ -485,6 +582,7 @@ Future<void> showBrewSetupSheet({
         initialTags: initialTags,
         initialBottle: initialBottle,
         initialLiquid: initialLiquid,
+        initialIsFreeForm: initialIsFreeForm,
         onStartBrewing: onStartBrewing,
       ),
     ),

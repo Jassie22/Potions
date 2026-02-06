@@ -10,16 +10,7 @@ class AppConstants {
   
   // Tags
   static const int maxTagsPerSession = 5;
-  static const List<String> defaultTags = [
-    'studying',
-    'writing',
-    'coding',
-    'reading',
-    'creative',
-    'work',
-    'learning',
-    'practice',
-  ];
+  static const List<String> defaultTags = [];
   
   // Essence
   static const int essencePerMinute = 1;
@@ -74,6 +65,18 @@ class AppConstants {
   static const Duration shortAnimation = Duration(milliseconds: 200);
   static const Duration mediumAnimation = Duration(milliseconds: 400);
   static const Duration longAnimation = Duration(milliseconds: 800);
+
+  // Animation Speed Multipliers (for background themes & effects)
+  // These standardize the animation speeds across the app
+  static const double animSpeedSlow = 0.5;    // Stars, ambient drifting
+  static const double animSpeedMedium = 1.0;  // Bubbles, particles
+  static const double animSpeedFast = 2.0;    // Sparkles, active effects
+
+  // UI Transition Curves (for cozy feel)
+  // easeOutCubic provides soft deceleration for satisfying feedback
+  static const Duration uiTransitionFast = Duration(milliseconds: 100);
+  static const Duration uiTransitionMedium = Duration(milliseconds: 150);
+  static const Duration uiTransitionSlow = Duration(milliseconds: 250);
 }
 
 

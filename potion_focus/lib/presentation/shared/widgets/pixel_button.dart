@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:potion_focus/presentation/shared/widgets/pixel_loading.dart';
 
 /// Primary filled pixel-styled button with solid black border.
 /// Uses darken effect on press instead of Material ripple.
@@ -49,8 +50,14 @@ class _PixelButtonState extends State<PixelButton> {
       child: AnimatedOpacity(
         duration: const Duration(milliseconds: 150),
         opacity: isDisabled ? 0.4 : 1.0,
+        // Press depth effect: translate down + slight scale reduction
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 100),
+          duration: const Duration(milliseconds: 80),
+          curve: Curves.easeOutCubic,
+          transform: Matrix4.identity()
+            ..translate(0.0, _isPressed && !isDisabled ? 2.0 : 0.0)
+            ..scale(_isPressed && !isDisabled ? 0.98 : 1.0),
+          transformAlignment: Alignment.center,
           width: widget.width,
           padding: widget.padding ??
               const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
@@ -64,14 +71,7 @@ class _PixelButtonState extends State<PixelButton> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (widget.isLoading) ...[
-                SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation(textColor),
-                  ),
-                ),
+                PixelSpinner(size: 16, color: textColor),
               ] else ...[
                 if (widget.icon != null) ...[
                   Icon(widget.icon, color: textColor, size: 20),
@@ -140,8 +140,14 @@ class _PixelButtonOutlinedState extends State<PixelButtonOutlined> {
       child: AnimatedOpacity(
         duration: const Duration(milliseconds: 150),
         opacity: isDisabled ? 0.4 : 1.0,
+        // Press depth effect: translate down + slight scale reduction
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 100),
+          duration: const Duration(milliseconds: 80),
+          curve: Curves.easeOutCubic,
+          transform: Matrix4.identity()
+            ..translate(0.0, _isPressed && !isDisabled ? 2.0 : 0.0)
+            ..scale(_isPressed && !isDisabled ? 0.98 : 1.0),
+          transformAlignment: Alignment.center,
           width: widget.width,
           padding: widget.padding ??
               const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
@@ -155,14 +161,7 @@ class _PixelButtonOutlinedState extends State<PixelButtonOutlined> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (widget.isLoading) ...[
-                SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation(borderColor),
-                  ),
-                ),
+                PixelSpinner(size: 16, color: borderColor),
               ] else ...[
                 if (widget.icon != null) ...[
                   Icon(widget.icon, color: borderColor, size: 20),
@@ -227,8 +226,14 @@ class _PixelIconButtonState extends State<PixelIconButton> {
       child: AnimatedOpacity(
         duration: const Duration(milliseconds: 150),
         opacity: isDisabled ? 0.4 : 1.0,
+        // Press depth effect: translate down + slight scale reduction
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 100),
+          duration: const Duration(milliseconds: 80),
+          curve: Curves.easeOutCubic,
+          transform: Matrix4.identity()
+            ..translate(0.0, _isPressed && !isDisabled ? 2.0 : 0.0)
+            ..scale(_isPressed && !isDisabled ? 0.98 : 1.0),
+          transformAlignment: Alignment.center,
           width: widget.size,
           height: widget.size,
           decoration: BoxDecoration(

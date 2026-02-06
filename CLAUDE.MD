@@ -134,11 +134,25 @@ Avoid overengineering. Avoid vibes-only logic.
 
 ## Visual System Rules
 
+* **Pixel-art aesthetic throughout** -- the entire app uses a retro pixel-game style inspired by Minecraft.
 * All bottles, effects, and backgrounds are **CustomPaint only** -- no image assets for game content.
 * Potion appearance is stored as a JSON `visualConfig` on `PotionModel`. See `Documentation/VISUAL_SYSTEM.md`.
 * Rarity drives default visuals: rarity determines bottle shape, effect overlay, and glow intensity.
 * `fillPercent` is derived from timer state (`1 - remaining/total`), never persisted.
-* Liquid is clipped to the bottle body path -- shapes are defined in `bottle_shapes.dart`.
+* Bottles use a **pixel grid system** (`PixelBottle` class with `List<List<int>>` grid) -- see `bottle_shapes.dart`.
+* Cell types: `0`=empty, `1`=body, `2`=neck, `3`=cork, `4`=highlight, `5`=decoration.
+* All `Paint` objects in rendering code must use `isAntiAlias = false` for crisp pixel edges.
+* Outlines are **dark/black** (Minecraft-style), not semi-transparent.
+* All UI corners are `BorderRadius.zero` -- no rounded corners anywhere.
+* Background themes use stepped/banded color transitions, not smooth gradients.
+
+## Art Style Rules
+
+* **Fonts**: `PressStart2P` for headers/display, `Silkscreen` for body/labels. Bundled locally in `assets/fonts/` (not Google Fonts runtime).
+* **Colors**: Vivid, saturated game palette. No muted/pastel tones.
+* **Shapes**: All rectangles, no circles. `BoxShape.rectangle` everywhere.
+* **Elevation**: Always 0. Use solid pixel borders (2px) instead of shadows.
+* **Particles**: Stars, petals, dust etc. are small pixel squares, never smooth circles.
 
 ## Monetization Rules
 
@@ -161,15 +175,34 @@ Avoid overengineering. Avoid vibes-only logic.
 
 ## Workflow Rules
 
-### Commits
+### Thinking
+
+* **Always use extended thinking** before starting implementation work. Reason through the design, edge cases, and state changes before writing code.
+
+### MCP Servers (Mandatory)
+
+The following MCP servers are configured and **must** be used when applicable:
+
+| Server | When to use |
+|---|---|
+| **Context7** | Any time you need documentation for Flutter, Dart, pub packages, or any third-party library. Use `resolve-library-id` then `get-library-docs` instead of guessing APIs. Add "use context7" to documentation lookups. |
+| **Dart / Flutter** | Running Flutter commands (analyze, format, pub get, build, etc.), querying the analyzer, adding packages, and interacting with running apps. Prefer this over raw `flutter` CLI when the MCP tool covers the action. |
+| **Supabase** | All backend/database operations -- schema changes, RLS policies, queries, edge functions. |
+
+* **Do not guess APIs.** If you are unsure about a library's API, look it up via Context7 or the Dart MCP first.
+* When a new library or package is introduced, fetch its docs via Context7 before writing integration code.
+
+### Commits & Pushing
 
 * After every large change (new feature, phase completion, major refactor), **make a git commit** with a clear message describing what changed.
 * Do not batch multiple unrelated features into one commit.
+* **Always push to remote** after committing (`git push`). Do not leave commits local-only.
 
-### MCP Servers
+### Documentation
 
-* Use **Supabase MCP** for any backend/database operations when applicable.
-* Use **Context7 MCP** for documentation lookups and context retrieval when applicable.
+* After any feature addition, major refactor, or new system/mechanic, **update the relevant documentation** (this file, `Documentation/` folder, or inline doc comments).
+* If a new rule or decision is made during implementation, **add it to CLAUDE.md** before the task is considered complete.
+* Documentation updates should be part of the same commit as the code change, not a separate follow-up.
 
 ---
 

@@ -14,6 +14,11 @@ class UserDataModel {
   late int coinBalance;
   late String activeThemeId;
 
+  // Subscription-related tracking
+  DateTime? lastDailyBonusDate;
+  late int completedSessionCount;
+  DateTime? lastUpgradePromptDate;
+
   UserDataModel({
     this.essenceBalance = 0,
     this.totalFocusMinutes = 0,
@@ -22,5 +27,8 @@ class UserDataModel {
     this.lastFocusDate,
     this.coinBalance = 0,
     this.activeThemeId = 'theme_default',
+    this.lastDailyBonusDate,
+    this.completedSessionCount = 0,
+    this.lastUpgradePromptDate,
   });
 }

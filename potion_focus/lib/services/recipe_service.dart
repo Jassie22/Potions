@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potion_focus/data/local/database.dart';
 import 'package:potion_focus/data/local/isar_helpers.dart';
@@ -15,16 +16,23 @@ class RecipeService {
     final lockedRecipes = allRecipes.where((r) => !r.unlocked).toList();
 
     for (final recipe in lockedRecipes) {
-      final unlockCondition = jsonDecode(recipe.unlockCondition);
-      final isUnlocked = await _checkUnlockCondition(unlockCondition);
+      try {
+        final unlockCondition = jsonDecode(recipe.unlockCondition);
+        final isUnlocked = await _checkUnlockCondition(unlockCondition);
 
-      if (isUnlocked) {
-        recipe.unlocked = true;
-        recipe.unlockedAt = DateTime.now();
+        if (isUnlocked) {
+          recipe.unlocked = true;
+          recipe.unlockedAt = DateTime.now();
 
-        await db.writeTxn(() async {
-          await db.recipeModels.put(recipe);
-        });
+          await db.writeTxn(() async {
+            await db.recipeModels.put(recipe);
+          });
+          debugPrint('Recipe unlocked: ${recipe.name}');
+        }
+      } catch (e, stack) {
+        debugPrint('Recipe unlock check failed for ${recipe.name}: $e');
+        debugPrint('Condition JSON: ${recipe.unlockCondition}');
+        debugPrint('Stack trace: $stack');
       }
     }
   }
@@ -133,6 +141,121 @@ class RecipeService {
     final db = DatabaseHelper.instance;
     final allRecipes = await db.recipeModels.getAllItems();
     return allRecipes.where((r) => !r.unlocked).toList();
+  }
+
+  /// Get progress towards unlocking a recipe
+  Future<({int current, int required, String hint})> getRecipeProgress(RecipeModel recipe) async {
+    try {
+      final condition = jsonDecode(recipe.unlockCondition) as Map<String, dynamic>;
+      final type = condition['type'] as String;
+      final db = DatabaseHelper.instance;
+
+      switch (type) {
+        case 'potion_count':
+          final required = condition['value'] as int;
+          final current = await db.potionModels.count();
+          return (current: current, required: required, hint: 'Brew $required potions');
+
+        case 'total_time':
+          final required = condition['minutes'] as int;
+          final allUserData = await db.userDataModels.getAllItems();
+          final userData = allUserData.firstOrNull;
+          final current = userData?.totalFocusMinutes ?? 0;
+          return (current: current, required: required, hint: 'Focus for $required minutes');
+
+        case 'streak':
+          final required = condition['days'] as int;
+          final allUserData = await db.userDataModels.getAllItems();
+          final userData = allUserData.firstOrNull;
+          final current = userData?.streakDays ?? 0;
+          return (current: current, required: required, hint: 'Maintain a $required-day streak');
+
+        case 'rarity_count':
+          final rarity = condition['rarity'] as String;
+          final required = condition['count'] as int;
+          final allPotions = await db.potionModels.getAllItems();
+          final current = allPotions.where((p) => p.rarity == rarity).length;
+          return (current: current, required: required, hint: 'Brew $required $rarity potions');
+
+        case 'session_duration':
+          final required = condition['minutes'] as int;
+          final allSessions = await db.sessionModels.getAllItems();
+          final longestSession = allSessions.where((s) => s.completed).fold<int>(
+            0,
+            (max, s) => s.durationSeconds > max ? s.durationSeconds : max,
+          );
+          final current = longestSession ~/ 60;
+          return (current: current, required: required, hint: 'Complete a $required-minute session');
+
+        case 'time_of_day':
+          final afterStr = condition['after'] as String;
+          final required = condition['sessions'] as int;
+          final afterParts = afterStr.split(':');
+          final afterHour = int.parse(afterParts[0]);
+          final afterMinute = afterParts.length > 1 ? int.parse(afterParts[1]) : 0;
+
+          final allSessions = await db.sessionModels.getAllItems();
+          final current = allSessions.where((session) {
+            if (!session.completed) return false;
+            final localTime = session.startedAt.toLocal();
+            final sessionMinutes = localTime.hour * 60 + localTime.minute;
+            final afterMinutes = afterHour * 60 + afterMinute;
+            return sessionMinutes >= afterMinutes;
+          }).length;
+
+          final hint = condition.containsKey('before')
+              ? 'Complete $required sessions between $afterStr and ${condition['before']}'
+              : 'Complete $required sessions after $afterStr';
+          return (current: current, required: required, hint: hint);
+
+        case 'compound':
+          // For compound conditions, show first uncompleted condition
+          final conditions = condition['conditions'] as List<dynamic>;
+          for (final sub in conditions) {
+            final subProgress = await getRecipeProgress(
+              RecipeModel(
+                recipeId: 'temp',
+                name: 'temp',
+                unlockCondition: jsonEncode(sub),
+                rarity: 'common',
+              ),
+            );
+            if (subProgress.current < subProgress.required) {
+              return subProgress;
+            }
+          }
+          // All conditions met
+          return (current: 1, required: 1, hint: 'All conditions met!');
+
+        default:
+          return (current: 0, required: 1, hint: 'Complete a special challenge');
+      }
+    } catch (e) {
+      debugPrint('Failed to get recipe progress: $e');
+      return (current: 0, required: 1, hint: 'Progress unknown');
+    }
+  }
+
+  /// Get an inspirational quote for locked recipes
+  static String getInspirationQuote(String recipeName) {
+    const quotes = [
+      'Every focused minute brings you closer.',
+      'Patience brews the finest potions.',
+      'Your dedication will unlock wonders.',
+      'The journey matters as much as the reward.',
+      'Focus today, unlock tomorrow.',
+      'Great alchemists are made through persistence.',
+      'Each session adds to your mastery.',
+      'The best potions take time to brew.',
+      'Keep focusing - magic is near.',
+      'Your collection grows with every drop of effort.',
+      'One breath, one moment, one potion at a time.',
+      'The cauldron rewards those who wait.',
+      'Mastery is brewed slowly.',
+      'Your focus is your spell.',
+      'Ancient recipes reveal themselves to the devoted.',
+    ];
+    return quotes[recipeName.hashCode.abs() % quotes.length];
   }
 
   String getRecipeHint(Map<String, dynamic> condition) {

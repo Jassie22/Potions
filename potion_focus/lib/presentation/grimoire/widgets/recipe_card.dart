@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:potion_focus/core/theme/app_colors.dart';
 import 'package:potion_focus/core/utils/extensions.dart';
 import 'package:potion_focus/data/models/recipe_model.dart';
+import 'package:potion_focus/presentation/shared/painting/pixel_gradients.dart';
 import 'package:potion_focus/services/recipe_service.dart';
 
 class RecipeCard extends ConsumerWidget {
@@ -21,24 +22,21 @@ class RecipeCard extends ConsumerWidget {
     final rarityColor = AppColors.getRarityColor(recipe.rarity);
 
     return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+      elevation: 0,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero,
         side: BorderSide(
-          color: rarityColor.withOpacity(0.5),
+          color: Colors.black87,
           width: 2,
         ),
       ),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              rarityColor.withOpacity(0.1),
-              rarityColor.withOpacity(0.05),
-            ],
+          borderRadius: BorderRadius.zero,
+          gradient: PixelGradients.twoBand(
+            baseColor: rarityColor,
+            topOpacity: isUnlocked ? 0.12 : 0.06,
+            bottomOpacity: isUnlocked ? 0.04 : 0.02,
           ),
         ),
         padding: const EdgeInsets.all(16),
@@ -53,7 +51,7 @@ class RecipeCard extends ConsumerWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: rarityColor.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.zero,
                   ),
                   child: Icon(
                     _getRewardIcon(recipe.rewardType),
@@ -101,7 +99,7 @@ class RecipeCard extends ConsumerWidget {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardColor.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.zero,
                 ),
                 child: Text(
                   recipe.lore,
@@ -142,7 +140,7 @@ class RecipeCard extends ConsumerWidget {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: rarityColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.zero,
                 border: Border.all(
                   color: rarityColor.withOpacity(0.3),
                 ),

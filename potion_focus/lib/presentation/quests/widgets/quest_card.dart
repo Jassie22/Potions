@@ -120,16 +120,38 @@ class QuestCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.zero,
-                  child: LinearProgressIndicator(
-                    value: progressPercentage,
-                    minHeight: 8,
-                    backgroundColor: Colors.grey[300],
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      isCompleted ? Colors.green : _getQuestColor(),
-                    ),
-                  ),
+                // Custom pixel-style animated progress bar
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final barColor = isCompleted ? Colors.green : _getQuestColor();
+                    return Container(
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        border: Border.all(color: Colors.black38, width: 1),
+                      ),
+                      child: Stack(
+                        children: [
+                          // Animated fill
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.easeOutCubic,
+                            width: constraints.maxWidth * progressPercentage,
+                            height: 8,
+                            color: barColor,
+                          ),
+                          // Pixel highlight at top (adds depth)
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.easeOutCubic,
+                            width: constraints.maxWidth * progressPercentage,
+                            height: 2,
+                            color: barColor.withOpacity(0.3),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

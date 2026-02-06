@@ -57,24 +57,65 @@ class RecipePage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
-              // Potion illustration (or silhouette)
+              // Potion illustration with colored glow
               Expanded(
                 child: Center(
-                  child: isUnlocked
-                      ? PotionRenderer(
-                          config: _getRecipeVisualConfig(),
-                          size: 180,
-                          fillPercent: 1.0,
-                        )
-                      : Opacity(
-                          opacity: 0.15,
-                          child: PotionRenderer(
-                            config: _getRecipeVisualConfig(),
-                            size: 180,
-                            fillPercent: 0.7,
-                            showGlow: false,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Colored glow circle behind potion
+                          Container(
+                            width: 200,
+                            height: 200,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              gradient: RadialGradient(
+                                colors: [
+                                  isUnlocked
+                                      ? _getRecipeVisualConfig().liquidColor.withOpacity(0.15)
+                                      : _getRecipeVisualConfig().liquidColor.withOpacity(0.06),
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
                           ),
+                          // Potion bottle
+                          isUnlocked
+                              ? PotionRenderer(
+                                  config: _getRecipeVisualConfig(),
+                                  size: 220,
+                                  fillPercent: 1.0,
+                                )
+                              : Opacity(
+                                  opacity: 0.25,
+                                  child: PotionRenderer(
+                                    config: _getRecipeVisualConfig(),
+                                    size: 220,
+                                    fillPercent: 0.7,
+                                    showGlow: false,
+                                  ),
+                                ),
+                        ],
+                      ),
+                      // Liquid color name label
+                      if (recipe.rewardType == 'liquid') ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          isUnlocked ? _getLiquidName() : '???',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: isUnlocked
+                                    ? _getRecipeVisualConfig().liquidColor
+                                    : Colors.grey[400],
+                                fontWeight: FontWeight.w600,
+                                fontStyle: FontStyle.italic,
+                              ),
                         ),
+                      ],
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -85,7 +126,7 @@ class RecipePage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: const Color(0xFF8B7355).withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.zero,
                   ),
                   child: Text(
                     recipe.lore,
@@ -105,7 +146,7 @@ class RecipePage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: const Color(0xFF8B7355).withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.zero,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -207,6 +248,24 @@ class RecipePage extends StatelessWidget {
       default:
         return Icons.card_giftcard;
     }
+  }
+
+  static const _liquidNames = {
+    'liquid_0': 'Twilight Essence',
+    'liquid_1': 'Azure Depths',
+    'liquid_2': 'Emerald Tide',
+    'liquid_3': 'Verdant Elixir',
+    'liquid_4': 'Crimson Ember',
+    'liquid_5': 'Liquid Sunlight',
+    'liquid_6': 'Roseveil Draught',
+    'liquid_7': 'Slate Whisper',
+    'liquid_8': 'Sea Moss',
+    'liquid_9': 'Rosy Dusk',
+  };
+
+  String _getLiquidName() {
+    final config = _getRecipeVisualConfig();
+    return _liquidNames[config.liquid] ?? recipe.rewardAssetKey;
   }
 
   String _getRewardLabel() {

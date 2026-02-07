@@ -153,9 +153,9 @@ class StatisticsScreen extends ConsumerWidget {
                                 child: LinearProgressIndicator(
                                   value: fraction,
                                   minHeight: 16,
-                                  backgroundColor: AppColors.primaryLight.withOpacity(0.1),
+                                  backgroundColor: AppColors.primaryLight.withValues(alpha: 0.1),
                                   valueColor: AlwaysStoppedAnimation(
-                                    AppColors.primaryLight.withOpacity(0.7),
+                                    AppColors.primaryLight.withValues(alpha: 0.7),
                                   ),
                                 ),
                               ),
@@ -210,9 +210,9 @@ class StatisticsScreen extends ConsumerWidget {
                       return Container(
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                         decoration: BoxDecoration(
-                          color: color.withOpacity(0.15),
+                          color: color.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.zero,
-                          border: Border.all(color: color.withOpacity(0.4)),
+                          border: Border.all(color: color.withValues(alpha: 0.4)),
                         ),
                         child: Column(
                           children: [
@@ -316,7 +316,7 @@ class _BarChartPainter extends CustomPainter {
     final effectiveMax = maxVal > 0 ? maxVal : 1.0;
     final barCount = values.length;
     final barWidth = size.width / (barCount * 2);
-    final bottomPadding = 24.0;
+    const bottomPadding = 24.0;
     final chartHeight = size.height - bottomPadding;
 
     final barPaint = Paint()
@@ -325,7 +325,7 @@ class _BarChartPainter extends CustomPainter {
       ..isAntiAlias = false;
 
     final textStyle = TextStyle(
-      color: barColor.withOpacity(0.8),
+      color: barColor.withValues(alpha: 0.8),
       fontSize: 9,
     );
 
@@ -334,14 +334,14 @@ class _BarChartPainter extends CustomPainter {
       final barHeight = (values[i] / effectiveMax) * chartHeight * 0.85;
 
       // Sharp pixel bar (no border radius)
-      barPaint.color = barColor.withOpacity(0.7);
+      barPaint.color = barColor.withValues(alpha: 0.7);
       canvas.drawRect(
         Rect.fromLTWH(x, chartHeight - barHeight, barWidth, barHeight),
         barPaint,
       );
 
       // Pixel highlight on left edge of bar
-      barPaint.color = Colors.white.withOpacity(0.15);
+      barPaint.color = Colors.white.withValues(alpha: 0.15);
       canvas.drawRect(
         Rect.fromLTWH(x, chartHeight - barHeight, 2, barHeight),
         barPaint,

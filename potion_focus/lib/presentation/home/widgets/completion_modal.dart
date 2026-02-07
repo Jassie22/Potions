@@ -101,7 +101,7 @@ class _CompletionModalState extends ConsumerState<CompletionModal>
         angle: -math.pi / 2 + (_random.nextDouble() - 0.5) * 0.5,
         speed: 30 + _random.nextDouble() * 40,
         size: 4 + _random.nextDouble() * 4,
-        color: AppColors.mysticalGold.withOpacity(0.8),
+        color: AppColors.mysticalGold.withValues(alpha: 0.8),
         delay: 0.3 + _random.nextDouble() * 0.3,
         isEssence: true,
       ));
@@ -125,7 +125,7 @@ class _CompletionModalState extends ConsumerState<CompletionModal>
       animation: _controller,
       builder: (context, child) {
         return Container(
-          color: Colors.black.withOpacity(_fadeIn.value * 0.6),
+          color: Colors.black.withValues(alpha: _fadeIn.value * 0.6),
           child: SafeArea(
             child: Center(
               child: Opacity(
@@ -139,7 +139,7 @@ class _CompletionModalState extends ConsumerState<CompletionModal>
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                         side: BorderSide(
-                          color: rarityColor.withOpacity(0.5),
+                          color: rarityColor.withValues(alpha: 0.5),
                           width: 2,
                         ),
                       ),
@@ -205,7 +205,7 @@ class _CompletionModalState extends ConsumerState<CompletionModal>
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Icon(Icons.auto_awesome, color: AppColors.mysticalGold, size: 20),
+                                      const Icon(Icons.auto_awesome, color: AppColors.mysticalGold, size: 20),
                                       const SizedBox(width: 6),
                                       Text(
                                         '+${widget.potion.essenceEarned} Essence',
@@ -223,7 +223,7 @@ class _CompletionModalState extends ConsumerState<CompletionModal>
                                     _getLoreText(widget.potion.rarity),
                                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                           fontStyle: FontStyle.italic,
-                                          color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
+                                          color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.5),
                                         ),
                                     textAlign: TextAlign.center,
                                   ),
@@ -241,7 +241,7 @@ class _CompletionModalState extends ConsumerState<CompletionModal>
                                   backgroundColor: rarityColor,
                                   foregroundColor: Colors.white,
                                   padding: const EdgeInsets.symmetric(vertical: 14),
-                                  shape: RoundedRectangleBorder(
+                                  shape: const RoundedRectangleBorder(
                                     borderRadius: BorderRadius.zero,
                                   ),
                                 ),
@@ -367,7 +367,7 @@ class _CelebrationPainter extends CustomPainter {
         final opacity = (1.0 - particleProgress).clamp(0.0, 1.0);
 
         final paint = Paint()
-          ..color = particle.color.withOpacity(opacity)
+          ..color = particle.color.withValues(alpha: opacity)
           ..isAntiAlias = false;
 
         // Draw as pixel square
@@ -386,7 +386,7 @@ class _CelebrationPainter extends CustomPainter {
         final opacity = (1.0 - particleProgress * 0.8).clamp(0.0, 1.0);
 
         final paint = Paint()
-          ..color = particle.color.withOpacity(opacity)
+          ..color = particle.color.withValues(alpha: opacity)
           ..isAntiAlias = false;
 
         // Draw as pixel square

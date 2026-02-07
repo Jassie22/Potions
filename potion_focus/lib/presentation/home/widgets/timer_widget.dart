@@ -140,7 +140,7 @@ class _TimerWidgetState extends ConsumerState<TimerWidget> {
             style: Theme.of(context).textTheme.displayLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   fontSize: 48,
-                  color: Colors.white.withOpacity(0.95),
+                  color: Colors.white.withValues(alpha: 0.95),
                 ),
           ),
         ),
@@ -149,7 +149,7 @@ class _TimerWidgetState extends ConsumerState<TimerWidget> {
           Text(
             statusText,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white.withOpacity(0.6),
+                  color: Colors.white.withValues(alpha: 0.6),
                 ),
           ),
           // Show max time hint for free-form
@@ -158,7 +158,7 @@ class _TimerWidgetState extends ConsumerState<TimerWidget> {
             Text(
               '(up to 2 hours)',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.white.withOpacity(0.4),
+                    color: Colors.white.withValues(alpha: 0.4),
                     fontSize: 10,
                   ),
             ),
@@ -297,7 +297,7 @@ class _TimerWidgetState extends ConsumerState<TimerWidget> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.stop, color: AppColors.error, size: 20),
+                  const Icon(Icons.stop, color: AppColors.error, size: 20),
                   const SizedBox(width: 6),
                   Text(
                     'Cancel',

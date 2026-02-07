@@ -73,7 +73,7 @@ Future<bool?> showPixelConfirmDialog({
         Text(
           message,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8),
+                color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.8),
               ),
           textAlign: TextAlign.center,
         ),
@@ -134,7 +134,7 @@ Future<void> showPixelAlertDialog({
         Text(
           message,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8),
+                color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.8),
               ),
           textAlign: TextAlign.center,
         ),

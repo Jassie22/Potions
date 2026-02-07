@@ -123,7 +123,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      colorScheme: ColorScheme.light(
+      colorScheme: const ColorScheme.light(
         primary: AppColors.primaryLight,
         secondary: AppColors.secondaryLight,
         surface: AppColors.surfaceLight,
@@ -136,7 +136,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,
           side: BorderSide(
-            color: AppColors.primaryLight.withOpacity(0.3),
+            color: AppColors.primaryLight.withValues(alpha: 0.3),
             width: 2,
           ),
         ),
@@ -149,7 +149,7 @@ class AppTheme {
             borderRadius: BorderRadius.zero,
           ),
           side: BorderSide(
-            color: AppColors.primaryLight.withOpacity(0.4),
+            color: AppColors.primaryLight.withValues(alpha: 0.4),
             width: 2,
           ),
           textStyle: const TextStyle(
@@ -163,11 +163,11 @@ class AppTheme {
           borderRadius: BorderRadius.zero,
         ),
         side: BorderSide(
-          color: AppColors.primaryLight.withOpacity(0.3),
+          color: AppColors.primaryLight.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
-      segmentedButtonTheme: SegmentedButtonThemeData(
+      segmentedButtonTheme: const SegmentedButtonThemeData(
         style: ButtonStyle(
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
@@ -191,7 +191,7 @@ class AppTheme {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
           borderSide: BorderSide(
-            color: AppColors.primaryLight.withOpacity(0.3),
+            color: AppColors.primaryLight.withValues(alpha: 0.3),
             width: 2,
           ),
         ),
@@ -202,7 +202,7 @@ class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.surfaceLight,
-        indicatorColor: AppColors.primaryLight.withOpacity(0.15),
+        indicatorColor: AppColors.primaryLight.withValues(alpha: 0.15),
         indicatorShape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,
         ),
@@ -219,7 +219,7 @@ class AppTheme {
         trackHeight: 6,
         thumbColor: AppColors.primaryLight,
         activeTrackColor: AppColors.primaryLight,
-        inactiveTrackColor: AppColors.primaryLight.withOpacity(0.2),
+        inactiveTrackColor: AppColors.primaryLight.withValues(alpha: 0.2),
       ),
       bottomSheetTheme: const BottomSheetThemeData(
         shape: RoundedRectangleBorder(
@@ -233,7 +233,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      colorScheme: ColorScheme.dark(
+      colorScheme: const ColorScheme.dark(
         primary: AppColors.primaryDark,
         secondary: AppColors.secondaryDark,
         surface: AppColors.surfaceDark,
@@ -246,7 +246,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,
           side: BorderSide(
-            color: AppColors.mysticalGold.withOpacity(0.4),
+            color: AppColors.mysticalGold.withValues(alpha: 0.4),
             width: 2,
           ),
         ),
@@ -259,7 +259,7 @@ class AppTheme {
             borderRadius: BorderRadius.zero,
           ),
           side: BorderSide(
-            color: AppColors.mysticalGold.withOpacity(0.5),
+            color: AppColors.mysticalGold.withValues(alpha: 0.5),
             width: 2,
           ),
           textStyle: const TextStyle(
@@ -273,11 +273,11 @@ class AppTheme {
           borderRadius: BorderRadius.zero,
         ),
         side: BorderSide(
-          color: AppColors.mysticalGold.withOpacity(0.35),
+          color: AppColors.mysticalGold.withValues(alpha: 0.35),
           width: 1,
         ),
       ),
-      segmentedButtonTheme: SegmentedButtonThemeData(
+      segmentedButtonTheme: const SegmentedButtonThemeData(
         style: ButtonStyle(
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
@@ -301,7 +301,7 @@ class AppTheme {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.zero,
           borderSide: BorderSide(
-            color: AppColors.mysticalGold.withOpacity(0.4),
+            color: AppColors.mysticalGold.withValues(alpha: 0.4),
             width: 2,
           ),
         ),
@@ -312,7 +312,7 @@ class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.surfaceDark,
-        indicatorColor: AppColors.primaryDark.withOpacity(0.25),
+        indicatorColor: AppColors.primaryDark.withValues(alpha: 0.25),
         indicatorShape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.zero,
         ),
@@ -329,7 +329,7 @@ class AppTheme {
         trackHeight: 6,
         thumbColor: AppColors.primaryDark,
         activeTrackColor: AppColors.primaryDark,
-        inactiveTrackColor: AppColors.primaryDark.withOpacity(0.2),
+        inactiveTrackColor: AppColors.primaryDark.withValues(alpha: 0.2),
       ),
       bottomSheetTheme: const BottomSheetThemeData(
         shape: RoundedRectangleBorder(

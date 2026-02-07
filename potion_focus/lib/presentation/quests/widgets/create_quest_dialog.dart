@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:potion_focus/core/theme/app_colors.dart';
 import 'package:potion_focus/data/local/database.dart';
 import 'package:potion_focus/data/local/isar_helpers.dart';
 import 'package:potion_focus/data/models/tag_stats_model.dart';
@@ -87,7 +86,7 @@ class _CreateQuestDialogState extends ConsumerState<CreateQuestDialog> {
             Text(
               'Create a focused challenge for a specific area',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+                    color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
                   ),
             ),
             const SizedBox(height: 24),
@@ -105,7 +104,7 @@ class _CreateQuestDialogState extends ConsumerState<CreateQuestDialog> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  border: Border.all(color: Colors.grey.withOpacity(0.3)),
+                  border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
                 ),
                 child: Column(
                   children: [
@@ -143,7 +142,7 @@ class _CreateQuestDialogState extends ConsumerState<CreateQuestDialog> {
                         border: Border.all(
                           color: isSelected
                               ? Theme.of(context).primaryColor
-                              : Colors.grey.withOpacity(0.3),
+                              : Colors.grey.withValues(alpha: 0.3),
                           width: isSelected ? 2 : 1,
                         ),
                       ),
@@ -164,7 +163,7 @@ class _CreateQuestDialogState extends ConsumerState<CreateQuestDialog> {
                               style: TextStyle(
                                 fontSize: 10,
                                 color: isSelected
-                                    ? Colors.white.withOpacity(0.8)
+                                    ? Colors.white.withValues(alpha: 0.8)
                                     : Colors.grey,
                               ),
                             ),
@@ -182,9 +181,9 @@ class _CreateQuestDialogState extends ConsumerState<CreateQuestDialog> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withOpacity(0.1),
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                   border: Border.all(
-                    color: Theme.of(context).primaryColor.withOpacity(0.3),
+                    color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Column(
@@ -218,7 +217,7 @@ class _CreateQuestDialogState extends ConsumerState<CreateQuestDialog> {
                     Text(
                       'Based on your recent focus patterns',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.6),
+                            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
                             fontStyle: FontStyle.italic,
                           ),
                     ),

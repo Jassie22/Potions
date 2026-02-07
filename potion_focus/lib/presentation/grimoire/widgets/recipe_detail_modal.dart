@@ -29,9 +29,9 @@ class RecipeDetailModal extends StatelessWidget {
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.75,
       ),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF5E6C8), // Parchment color
-        border: const Border(
+      decoration: const BoxDecoration(
+        color: Color(0xFFF5E6C8), // Parchment color
+        border: Border(
           top: BorderSide(color: Color(0xFF3D2B1F), width: 3),
           left: BorderSide(color: Color(0xFF3D2B1F), width: 3),
           right: BorderSide(color: Color(0xFF3D2B1F), width: 3),
@@ -48,7 +48,7 @@ class RecipeDetailModal extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B7355).withOpacity(0.5),
+                  color: const Color(0xFF8B7355).withValues(alpha: 0.5),
                   borderRadius: BorderRadius.zero,
                 ),
               ),
@@ -102,8 +102,8 @@ class RecipeDetailModal extends StatelessWidget {
                       gradient: RadialGradient(
                         colors: [
                           isUnlocked
-                              ? config.liquidColor.withOpacity(0.12)
-                              : config.liquidColor.withOpacity(0.05),
+                              ? config.liquidColor.withValues(alpha: 0.12)
+                              : config.liquidColor.withValues(alpha: 0.05),
                           Colors.transparent,
                         ],
                       ),
@@ -136,9 +136,9 @@ class RecipeDetailModal extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF8B7355).withOpacity(0.08),
+                    color: const Color(0xFF8B7355).withValues(alpha: 0.08),
                     border: Border.all(
-                      color: const Color(0xFF8B7355).withOpacity(0.2),
+                      color: const Color(0xFF8B7355).withValues(alpha: 0.2),
                       width: 1,
                     ),
                   ),
@@ -162,9 +162,9 @@ class RecipeDetailModal extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF8B7355).withOpacity(0.08),
+                    color: const Color(0xFF8B7355).withValues(alpha: 0.08),
                     border: Border.all(
-                      color: const Color(0xFF8B7355).withOpacity(0.2),
+                      color: const Color(0xFF8B7355).withValues(alpha: 0.2),
                       width: 1,
                     ),
                   ),
@@ -193,9 +193,9 @@ class RecipeDetailModal extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
-                  color: rarityColor.withOpacity(0.1),
+                  color: rarityColor.withValues(alpha: 0.1),
                   border: Border.all(
-                    color: rarityColor.withOpacity(0.3),
+                    color: rarityColor.withValues(alpha: 0.3),
                     width: 2,
                   ),
                 ),
@@ -225,7 +225,7 @@ class RecipeDetailModal extends StatelessWidget {
                 Text(
                   'Discovered ${recipe.unlockedAt!.toFormattedDate()}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFF5D4E37).withOpacity(0.5),
+                        color: const Color(0xFF5D4E37).withValues(alpha: 0.5),
                         fontSize: 11,
                       ),
                 ),

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:potion_focus/core/theme/app_colors.dart';
 import 'package:potion_focus/data/models/recipe_model.dart';
@@ -87,7 +86,7 @@ class RecipeGridPage extends StatelessWidget {
             Expanded(
               child: Container(
                 height: 2,
-                color: color.withOpacity(0.3),
+                color: color.withValues(alpha: 0.3),
               ),
             ),
             Padding(
@@ -106,7 +105,7 @@ class RecipeGridPage extends StatelessWidget {
             Expanded(
               child: Container(
                 height: 2,
-                color: color.withOpacity(0.3),
+                color: color.withValues(alpha: 0.3),
               ),
             ),
           ],
@@ -128,7 +127,7 @@ class RecipeGridPage extends StatelessWidget {
         Text(
           '${recipes.length} ${recipes.length == 1 ? 'Recipe' : 'Recipes'}',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: const Color(0xFF5D4E37).withOpacity(0.6),
+                color: const Color(0xFF5D4E37).withValues(alpha: 0.6),
               ),
         ),
       ],
@@ -145,7 +144,7 @@ class RecipeGridPage extends StatelessWidget {
           width: isActive ? 12 : 6,
           height: 6,
           decoration: BoxDecoration(
-            color: isActive ? color : color.withOpacity(0.3),
+            color: isActive ? color : color.withValues(alpha: 0.3),
             borderRadius: BorderRadius.zero,
           ),
         );

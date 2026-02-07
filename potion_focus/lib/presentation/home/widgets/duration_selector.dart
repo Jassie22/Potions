@@ -96,7 +96,7 @@ class _DurationSelectorState extends State<DurationSelector> {
           });
         }
       },
-      selectedColor: AppColors.primaryLight.withOpacity(0.3),
+      selectedColor: AppColors.primaryLight.withValues(alpha: 0.3),
       labelStyle: TextStyle(
         color: isSelected
             ? AppColors.primaryLight
@@ -117,7 +117,7 @@ class _DurationSelectorState extends State<DurationSelector> {
           _showCustomInput = true;
         });
       },
-      selectedColor: AppColors.secondaryLight.withOpacity(0.3),
+      selectedColor: AppColors.secondaryLight.withValues(alpha: 0.3),
       avatar: const Icon(Icons.edit, size: 16),
     );
   }
@@ -134,7 +134,7 @@ class _DurationSelectorState extends State<DurationSelector> {
       _customController.clear();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
             'Please enter a duration between ${AppConstants.minCustomDuration} and ${AppConstants.maxCustomDuration} minutes',
           ),

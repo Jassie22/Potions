@@ -65,7 +65,7 @@ class ShopItemCard extends ConsumerWidget {
                           color: (isSubscriberOnly
                                   ? AppColors.legendary
                                   : rarityColor)
-                              .withOpacity(0.2),
+                              .withValues(alpha: 0.2),
                           border: item.category == 'background'
                               ? Border.all(color: Colors.black54, width: 2)
                               : null,
@@ -77,8 +77,8 @@ class ShopItemCard extends ConsumerWidget {
                                   painter: BottlePainter(
                                     shapeId: item.assetKey,
                                     fillPercent: 0.6,
-                                    liquidColor: rarityColor.withOpacity(0.7),
-                                    glassColor: Colors.white.withOpacity(0.8),
+                                    liquidColor: rarityColor.withValues(alpha: 0.7),
+                                    glassColor: Colors.white.withValues(alpha: 0.8),
                                   ),
                                 ),
                               )
@@ -158,14 +158,14 @@ class ShopItemCard extends ConsumerWidget {
                         Icon(
                           Icons.workspace_premium,
                           size: 12,
-                          color: AppColors.legendary.withOpacity(0.8),
+                          color: AppColors.legendary.withValues(alpha: 0.8),
                         ),
                       ] else if (!isPurchased && isCoins) ...[
                         const SizedBox(width: 6),
                         Icon(
                           Icons.monetization_on,
                           size: 12,
-                          color: Colors.blue.withOpacity(0.7),
+                          color: Colors.blue.withValues(alpha: 0.7),
                         ),
                       ],
                     ],
@@ -184,7 +184,7 @@ class ShopItemCard extends ConsumerWidget {
                                   .textTheme
                                   .bodySmall
                                   ?.color
-                                  ?.withOpacity(0.6),
+                                  ?.withValues(alpha: 0.6),
                               fontSize: 11,
                             ),
                         textAlign: TextAlign.center,
@@ -225,9 +225,9 @@ class ShopItemCard extends ConsumerWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: AppColors.success.withOpacity(0.15),
+          color: AppColors.success.withValues(alpha: 0.15),
           borderRadius: BorderRadius.zero,
-          border: Border.all(color: AppColors.success.withOpacity(0.5)),
+          border: Border.all(color: AppColors.success.withValues(alpha: 0.5)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -273,15 +273,15 @@ class ShopItemCard extends ConsumerWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 10),
             decoration: BoxDecoration(
-              color: AppColors.legendary.withOpacity(0.1),
+              color: AppColors.legendary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.zero,
-              border: Border.all(color: AppColors.legendary.withOpacity(0.4)),
+              border: Border.all(color: AppColors.legendary.withValues(alpha: 0.4)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.lock,
-                    color: AppColors.legendary.withOpacity(0.8), size: 16),
+                    color: AppColors.legendary.withValues(alpha: 0.8), size: 16),
                 const SizedBox(width: 6),
                 Text(
                   'Exclusive',

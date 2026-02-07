@@ -44,9 +44,9 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
               data: (balance) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.15),
+                  color: Colors.blue.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.zero,
-                  border: Border.all(color: Colors.blue.withOpacity(0.5)),
+                  border: Border.all(color: Colors.blue.withValues(alpha: 0.5)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -73,9 +73,9 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
               data: (balance) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.amber.withOpacity(0.15),
+                  color: Colors.amber.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.zero,
-                  border: Border.all(color: Colors.amber.withOpacity(0.5)),
+                  border: Border.all(color: Colors.amber.withValues(alpha: 0.5)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -172,7 +172,7 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryLight.withOpacity(0.3) : Colors.transparent,
+          color: isSelected ? AppColors.primaryLight.withValues(alpha: 0.3) : Colors.transparent,
           border: Border.all(
             color: isSelected ? AppColors.primaryLight : Colors.black54,
             width: 2,

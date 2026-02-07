@@ -31,7 +31,7 @@ class _ParchmentPainter extends CustomPainter {
       final x = rng.nextDouble() * size.width;
       final y = rng.nextDouble() * size.height;
       final opacity = rng.nextDouble() * 0.06;
-      noisePaint.color = Color(0xFF8B7355).withOpacity(opacity);
+      noisePaint.color = const Color(0xFF8B7355).withValues(alpha: opacity);
       canvas.drawCircle(Offset(x, y), rng.nextDouble() * 3 + 1, noisePaint);
     }
 
@@ -42,7 +42,7 @@ class _ParchmentPainter extends CustomPainter {
         radius: 0.85,
         colors: [
           Colors.transparent,
-          const Color(0xFF8B7355).withOpacity(0.12),
+          const Color(0xFF8B7355).withValues(alpha: 0.12),
         ],
         stops: const [0.6, 1.0],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
@@ -54,7 +54,7 @@ class _ParchmentPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          const Color(0xFF8B7355).withOpacity(0.15),
+          const Color(0xFF8B7355).withValues(alpha: 0.15),
           Colors.transparent,
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height * 0.04));
@@ -69,7 +69,7 @@ class _ParchmentPainter extends CustomPainter {
         begin: Alignment.bottomCenter,
         end: Alignment.topCenter,
         colors: [
-          const Color(0xFF8B7355).withOpacity(0.12),
+          const Color(0xFF8B7355).withValues(alpha: 0.12),
           Colors.transparent,
         ],
       ).createShader(Rect.fromLTWH(0, size.height * 0.96, size.width, size.height * 0.04));
@@ -80,7 +80,7 @@ class _ParchmentPainter extends CustomPainter {
 
     // Decorative border line
     final borderPaint = Paint()
-      ..color = const Color(0xFF8B7355).withOpacity(0.25)
+      ..color = const Color(0xFF8B7355).withValues(alpha: 0.25)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
     canvas.drawRRect(

@@ -68,8 +68,8 @@ class BottleSelector extends ConsumerWidget {
                   width: 68,
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
-                        : Theme.of(context).colorScheme.surface.withOpacity(0.6),
+                        ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)
+                        : Theme.of(context).colorScheme.surface.withValues(alpha: 0.6),
                     borderRadius: BorderRadius.zero,
                     border: isSelected
                         ? Border.all(
@@ -77,7 +77,7 @@ class BottleSelector extends ConsumerWidget {
                             width: 2,
                           )
                         : Border.all(
-                            color: AppColors.mysticalGold.withOpacity(0.2),
+                            color: AppColors.mysticalGold.withValues(alpha: 0.2),
                             width: 1,
                           ),
                   ),
@@ -94,7 +94,7 @@ class BottleSelector extends ConsumerWidget {
                             liquidColor: Colors.transparent,
                             glassColor: isSelected
                                 ? Colors.white
-                                : Colors.white.withOpacity(0.6),
+                                : Colors.white.withValues(alpha: 0.6),
                           ),
                         ),
                       ),
@@ -105,7 +105,7 @@ class BottleSelector extends ConsumerWidget {
                           fontSize: 9,
                           color: isSelected
                               ? Colors.white
-                              : Colors.white.withOpacity(0.5),
+                              : Colors.white.withValues(alpha: 0.5),
                           fontWeight:
                               isSelected ? FontWeight.w700 : FontWeight.w500,
                         ),

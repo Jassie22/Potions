@@ -7,8 +7,6 @@ import 'package:potion_focus/presentation/settings/settings_screen.dart';
 import 'package:potion_focus/presentation/shared/painting/background_themes.dart';
 import 'package:potion_focus/services/timer_service.dart';
 import 'package:potion_focus/services/theme_service.dart';
-import 'package:potion_focus/services/upgrade_prompt_service.dart';
-import 'package:potion_focus/presentation/shared/widgets/upgrade_prompt_modal.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -151,7 +149,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     Text(
                       'Focus deeply, create beautifully',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.white.withOpacity(0.6),
+                            color: Colors.white.withValues(alpha: 0.6),
                           ),
                     ),
                     const SizedBox(height: 32),

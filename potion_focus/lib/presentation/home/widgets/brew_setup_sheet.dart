@@ -108,12 +108,12 @@ class _BrewSetupSheetState extends ConsumerState<BrewSetupSheet> {
                   padding: const EdgeInsets.all(12),
                   margin: const EdgeInsets.only(bottom: 12),
                   decoration: BoxDecoration(
-                    color: AppColors.warning.withOpacity(0.15),
+                    color: AppColors.warning.withValues(alpha: 0.15),
                     border: Border.all(color: AppColors.warning, width: 2),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.warning_amber, color: AppColors.warning, size: 20),
+                      const Icon(Icons.warning_amber, color: AppColors.warning, size: 20),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -201,10 +201,10 @@ class _BrewSetupSheetState extends ConsumerState<BrewSetupSheet> {
                 child: TextField(
                   controller: _customDurationController,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Minutes',
                     hintText: '${AppConstants.minCustomDuration}-${AppConstants.maxCustomDuration}',
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
                   onSubmitted: (_) => _applyCustomDuration(),
                 ),
@@ -230,16 +230,16 @@ class _BrewSetupSheetState extends ConsumerState<BrewSetupSheet> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.epic.withOpacity(0.15),
+              color: AppColors.epic.withValues(alpha: 0.15),
               border: Border.all(color: AppColors.epic, width: 2),
             ),
             child: Row(
               children: [
-                Icon(Icons.all_inclusive, color: AppColors.epic, size: 20),
+                const Icon(Icons.all_inclusive, color: AppColors.epic, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Focus freely for up to ${freeFormMaxMinutes ~/ 60} hours. End anytime (min ${freeFormMinMinutes} min for a valid potion).',
+                    'Focus freely for up to ${freeFormMaxMinutes ~/ 60} hours. End anytime (min $freeFormMinMinutes min for a valid potion).',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppColors.epic,
                     ),
@@ -319,7 +319,7 @@ class _BrewSetupSheetState extends ConsumerState<BrewSetupSheet> {
             ),
             const SizedBox(width: 4),
             Text(
-              isCustom ? '${_selectedDuration} min' : 'Custom',
+              isCustom ? '$_selectedDuration min' : 'Custom',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: isCustom ? Colors.white : null,
                     fontWeight: isCustom ? FontWeight.w700 : FontWeight.w500,
@@ -388,7 +388,7 @@ class _BrewSetupSheetState extends ConsumerState<BrewSetupSheet> {
     } else {
       ref.read(feedbackServiceProvider).haptic(HapticType.error);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
             'Enter ${AppConstants.minCustomDuration}-${AppConstants.maxCustomDuration} minutes',
           ),

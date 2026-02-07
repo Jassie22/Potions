@@ -156,7 +156,7 @@ class _TagManagementScreenState extends ConsumerState<TagManagementScreen> {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: tagColor.withOpacity(0.3),
+                        color: tagColor.withValues(alpha: 0.3),
                         border: Border.all(color: tagColor, width: 2),
                       ),
                       child: Center(
@@ -271,7 +271,7 @@ class _TagColorPickerDialogState extends State<_TagColorPickerDialog> {
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: color.withOpacity(0.5),
+                                color: color.withValues(alpha: 0.5),
                                 blurRadius: 8,
                                 spreadRadius: 2,
                               ),
@@ -293,7 +293,7 @@ class _TagColorPickerDialogState extends State<_TagColorPickerDialog> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
-              color: AppColors.tagColors[_selectedIndex].withOpacity(0.3),
+              color: AppColors.tagColors[_selectedIndex].withValues(alpha: 0.3),
               border: Border.all(
                 color: AppColors.tagColors[_selectedIndex],
                 width: 2,

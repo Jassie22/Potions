@@ -128,8 +128,8 @@ class PotionDetailModal extends ConsumerWidget {
                                 .map((tag) => Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: rarityColor.withOpacity(0.1),
-                                        border: Border.all(color: rarityColor.withOpacity(0.4), width: 2),
+                                        color: rarityColor.withValues(alpha: 0.1),
+                                        border: Border.all(color: rarityColor.withValues(alpha: 0.4), width: 2),
                                       ),
                                       child: Text(
                                         '#$tag',

@@ -77,7 +77,7 @@ class _AppNavigationState extends ConsumerState<AppNavigation> {
                     duration: const Duration(milliseconds: 120),
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     color: isSelected
-                        ? primaryColor.withOpacity(0.12)
+                        ? primaryColor.withValues(alpha: 0.12)
                         : Colors.transparent,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

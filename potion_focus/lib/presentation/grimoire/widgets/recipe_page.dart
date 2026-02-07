@@ -75,8 +75,8 @@ class RecipePage extends StatelessWidget {
                               gradient: RadialGradient(
                                 colors: [
                                   isUnlocked
-                                      ? _getRecipeVisualConfig().liquidColor.withOpacity(0.15)
-                                      : _getRecipeVisualConfig().liquidColor.withOpacity(0.06),
+                                      ? _getRecipeVisualConfig().liquidColor.withValues(alpha: 0.15)
+                                      : _getRecipeVisualConfig().liquidColor.withValues(alpha: 0.06),
                                   Colors.transparent,
                                 ],
                               ),
@@ -125,7 +125,7 @@ class RecipePage extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF8B7355).withOpacity(0.08),
+                    color: const Color(0xFF8B7355).withValues(alpha: 0.08),
                     borderRadius: BorderRadius.zero,
                   ),
                   child: Text(
@@ -145,7 +145,7 @@ class RecipePage extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF8B7355).withOpacity(0.08),
+                    color: const Color(0xFF8B7355).withValues(alpha: 0.08),
                     borderRadius: BorderRadius.zero,
                   ),
                   child: Row(
@@ -175,13 +175,13 @@ class RecipePage extends StatelessWidget {
                   Icon(
                     _getRewardIcon(),
                     size: 16,
-                    color: rarityColor.withOpacity(0.7),
+                    color: rarityColor.withValues(alpha: 0.7),
                   ),
                   const SizedBox(width: 6),
                   Text(
                     'Reward: ${_getRewardLabel()}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: const Color(0xFF5D4E37).withOpacity(0.7),
+                          color: const Color(0xFF5D4E37).withValues(alpha: 0.7),
                         ),
                   ),
                 ],
@@ -193,7 +193,7 @@ class RecipePage extends StatelessWidget {
                 Text(
                   'Discovered ${recipe.unlockedAt!.toFormattedDate()}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFF5D4E37).withOpacity(0.5),
+                        color: const Color(0xFF5D4E37).withValues(alpha: 0.5),
                         fontSize: 11,
                       ),
                 ),

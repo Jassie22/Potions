@@ -66,7 +66,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: AppColors.legendary.withOpacity(0.15),
+            color: AppColors.legendary.withValues(alpha: 0.15),
             border: Border.all(color: AppColors.legendary, width: 2),
             borderRadius: BorderRadius.zero,
           ),
@@ -150,7 +150,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             border: Border.all(
               color: canClaim
                   ? AppColors.mysticalGold
-                  : AppColors.mysticalGold.withOpacity(0.3),
+                  : AppColors.mysticalGold.withValues(alpha: 0.3),
               width: 2,
             ),
             borderRadius: BorderRadius.zero,
@@ -160,14 +160,14 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.mysticalGold.withOpacity(0.2),
+                  color: AppColors.mysticalGold.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.zero,
                 ),
                 child: Icon(
                   Icons.monetization_on,
                   color: canClaim
                       ? AppColors.mysticalGold
-                      : AppColors.mysticalGold.withOpacity(0.5),
+                      : AppColors.mysticalGold.withValues(alpha: 0.5),
                   size: 32,
                 ),
               ),
@@ -192,7 +192,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                                     .textTheme
                                     .bodySmall
                                     ?.color
-                                    ?.withOpacity(0.6),
+                                    ?.withValues(alpha: 0.6),
                           ),
                     ),
                   ],
@@ -204,9 +204,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                     final granted = await ref
                         .read(dailyBonusServiceProvider)
                         .checkAndGrantDailyBonus();
-                    if (granted && mounted) {
+                    if (granted && context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text(
                               '+${DailyBonusService.dailyCoinBonus} coins added!'),
                           backgroundColor: AppColors.success,
@@ -243,7 +243,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: AppColors.legendary.withOpacity(0.1),
+            color: AppColors.legendary.withValues(alpha: 0.1),
             border: Border.all(color: AppColors.legendary, width: 2),
             borderRadius: BorderRadius.zero,
           ),
@@ -324,7 +324,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         Text(
           'This is a one-time purchase. Payment will be charged to your Play Store or App Store account.',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.6),
+                color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
               ),
           textAlign: TextAlign.center,
         ),
@@ -370,7 +370,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             height: 28,
             decoration: BoxDecoration(
               color: (unlocked ? AppColors.success : AppColors.legendary)
-                  .withOpacity(0.2),
+                  .withValues(alpha: 0.2),
               borderRadius: BorderRadius.zero,
               border: Border.all(
                 color: unlocked ? AppColors.success : AppColors.legendary,
@@ -396,7 +396,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                             .textTheme
                             .bodySmall
                             ?.color
-                            ?.withOpacity(0.6),
+                            ?.withValues(alpha: 0.6),
                       ),
                 ),
               ],
@@ -427,7 +427,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.legendary.withOpacity(0.1),
+        color: AppColors.legendary.withValues(alpha: 0.1),
         border: Border.all(color: AppColors.legendary, width: 2),
         borderRadius: BorderRadius.zero,
       ),
@@ -438,7 +438,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.legendary.withOpacity(0.2),
+                  color: AppColors.legendary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.zero,
                 ),
                 child: const Icon(

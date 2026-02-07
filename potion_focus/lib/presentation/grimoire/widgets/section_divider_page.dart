@@ -28,12 +28,12 @@ class SectionDividerPage extends StatelessWidget {
               // Decorative line
               Row(
                 children: [
-                  Expanded(child: Divider(color: color.withOpacity(0.4), thickness: 1)),
+                  Expanded(child: Divider(color: color.withValues(alpha: 0.4), thickness: 1)),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Icon(Icons.auto_awesome, color: color.withOpacity(0.5), size: 20),
+                    child: Icon(Icons.auto_awesome, color: color.withValues(alpha: 0.5), size: 20),
                   ),
-                  Expanded(child: Divider(color: color.withOpacity(0.4), thickness: 1)),
+                  Expanded(child: Divider(color: color.withValues(alpha: 0.4), thickness: 1)),
                 ],
               ),
               const SizedBox(height: 20),
@@ -52,7 +52,7 @@ class SectionDividerPage extends StatelessWidget {
               Text(
                 '$recipeCount ${recipeCount == 1 ? 'Recipe' : 'Recipes'}',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: const Color(0xFF5D4E37).withOpacity(0.6),
+                      color: const Color(0xFF5D4E37).withValues(alpha: 0.6),
                     ),
               ),
               const SizedBox(height: 20),
@@ -60,12 +60,12 @@ class SectionDividerPage extends StatelessWidget {
               // Decorative line
               Row(
                 children: [
-                  Expanded(child: Divider(color: color.withOpacity(0.4), thickness: 1)),
+                  Expanded(child: Divider(color: color.withValues(alpha: 0.4), thickness: 1)),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Icon(Icons.auto_awesome, color: color.withOpacity(0.5), size: 20),
+                    child: Icon(Icons.auto_awesome, color: color.withValues(alpha: 0.5), size: 20),
                   ),
-                  Expanded(child: Divider(color: color.withOpacity(0.4), thickness: 1)),
+                  Expanded(child: Divider(color: color.withValues(alpha: 0.4), thickness: 1)),
                 ],
               ),
             ],

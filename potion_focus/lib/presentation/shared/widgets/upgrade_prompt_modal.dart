@@ -58,7 +58,7 @@ class UpgradePromptContent extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.legendary.withOpacity(0.15),
+              color: AppColors.legendary.withValues(alpha: 0.15),
               border: Border.all(color: AppColors.legendary, width: 2),
               borderRadius: BorderRadius.zero,
             ),
@@ -134,7 +134,7 @@ class UpgradePromptContent extends StatelessWidget {
                         .textTheme
                         .bodyMedium
                         ?.color
-                        ?.withOpacity(0.6),
+                        ?.withValues(alpha: 0.6),
                   ),
             ),
           ),
@@ -159,10 +159,10 @@ class UpgradePromptContent extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppColors.legendary.withOpacity(0.1),
+                color: AppColors.legendary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.zero,
                 border: Border.all(
-                  color: AppColors.legendary.withOpacity(0.3),
+                  color: AppColors.legendary.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),

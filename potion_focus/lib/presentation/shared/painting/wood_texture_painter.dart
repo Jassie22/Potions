@@ -81,7 +81,7 @@ class WoodTexturePainter extends CustomPainter {
     canvas.drawRect(Rect.fromLTWH(0, size.height - px, size.width, px), paint);
 
     // Add vertical wood grain on shelf edge
-    paint.color = darkWood.withOpacity(0.5);
+    paint.color = darkWood.withValues(alpha: 0.5);
     for (double x = px * 3; x < size.width; x += px * 8) {
       canvas.drawRect(Rect.fromLTWH(x, px, px, size.height - px * 2), paint);
     }
@@ -105,13 +105,13 @@ class ShelfShadowPainter extends CustomPainter {
     const px = 4.0;
 
     // Stepped shadow bands (3 levels of darkness)
-    paint.color = Colors.black.withOpacity(0.3);
+    paint.color = Colors.black.withValues(alpha: 0.3);
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, px), paint);
 
-    paint.color = Colors.black.withOpacity(0.15);
+    paint.color = Colors.black.withValues(alpha: 0.15);
     canvas.drawRect(Rect.fromLTWH(0, px, size.width, px), paint);
 
-    paint.color = Colors.black.withOpacity(0.05);
+    paint.color = Colors.black.withValues(alpha: 0.05);
     canvas.drawRect(Rect.fromLTWH(0, px * 2, size.width, px), paint);
   }
 

@@ -22,10 +22,10 @@ class PixelGradients {
 
     for (int i = 0; i < bands; i++) {
       final opacity = startOpacity - (opacityStep * i);
-      colors.add(baseColor.withOpacity(opacity));
+      colors.add(baseColor.withValues(alpha: opacity));
       // Each color appears twice to create hard edges
       if (i > 0) {
-        colors.add(baseColor.withOpacity(opacity));
+        colors.add(baseColor.withValues(alpha: opacity));
       }
 
       final stop = i / bands;
@@ -36,7 +36,7 @@ class PixelGradients {
     }
 
     // Add final color
-    colors.add(baseColor.withOpacity(endOpacity));
+    colors.add(baseColor.withValues(alpha: endOpacity));
     stops.add(1.0);
 
     return LinearGradient(
@@ -59,10 +59,10 @@ class PixelGradients {
       begin: begin,
       end: end,
       colors: [
-        baseColor.withOpacity(topOpacity),
-        baseColor.withOpacity(topOpacity),
-        baseColor.withOpacity(bottomOpacity),
-        baseColor.withOpacity(bottomOpacity),
+        baseColor.withValues(alpha: topOpacity),
+        baseColor.withValues(alpha: topOpacity),
+        baseColor.withValues(alpha: bottomOpacity),
+        baseColor.withValues(alpha: bottomOpacity),
       ],
       stops: const [0.0, 0.5, 0.5, 1.0],
     );
@@ -79,12 +79,12 @@ class PixelGradients {
       begin: Alignment.centerLeft,
       end: Alignment.centerRight,
       colors: [
-        baseColor.withOpacity(startOpacity),
-        baseColor.withOpacity(startOpacity),
-        baseColor.withOpacity(midOpacity),
-        baseColor.withOpacity(midOpacity),
-        baseColor.withOpacity(endOpacity),
-        baseColor.withOpacity(endOpacity),
+        baseColor.withValues(alpha: startOpacity),
+        baseColor.withValues(alpha: startOpacity),
+        baseColor.withValues(alpha: midOpacity),
+        baseColor.withValues(alpha: midOpacity),
+        baseColor.withValues(alpha: endOpacity),
+        baseColor.withValues(alpha: endOpacity),
       ],
       stops: const [0.0, 0.33, 0.33, 0.66, 0.66, 1.0],
     );
@@ -105,9 +105,9 @@ class PixelGradients {
 
     for (int i = 0; i < bands; i++) {
       final opacity = centerOpacity - (opacityStep * i);
-      colors.add(baseColor.withOpacity(opacity));
+      colors.add(baseColor.withValues(alpha: opacity));
       if (i > 0) {
-        colors.add(baseColor.withOpacity(opacity));
+        colors.add(baseColor.withValues(alpha: opacity));
       }
 
       final stop = i / bands;
@@ -117,7 +117,7 @@ class PixelGradients {
       stops.add(stop);
     }
 
-    colors.add(baseColor.withOpacity(edgeOpacity));
+    colors.add(baseColor.withValues(alpha: edgeOpacity));
     stops.add(1.0);
 
     return RadialGradient(

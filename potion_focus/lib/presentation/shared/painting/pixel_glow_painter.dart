@@ -36,7 +36,7 @@ class PixelGlowPainter extends CustomPainter {
 
       // Opacity decreases exponentially for outer layers
       final layerOpacity = baseOpacity * pulseMultiplier * _opacityFalloff(i, layers);
-      paint.color = glowColor.withOpacity(layerOpacity.clamp(0.0, 1.0));
+      paint.color = glowColor.withValues(alpha: layerOpacity.clamp(0.0, 1.0));
 
       // Draw the expanded rectangle
       final rect = Rect.fromLTWH(
@@ -114,7 +114,7 @@ class PixelSoftGlowPainter extends CustomPainter {
     for (int i = layers - 1; i >= 0; i--) {
       final expansion = (i + 1) * pixelSize * 1.5;
       final layerOpacity = baseOpacity * pulseMultiplier / (i + 1);
-      paint.color = glowColor.withOpacity(layerOpacity.clamp(0.0, 0.4));
+      paint.color = glowColor.withValues(alpha: layerOpacity.clamp(0.0, 0.4));
 
       // Draw a rounded rectangle using pixel blocks
       _drawPixelRoundedRect(

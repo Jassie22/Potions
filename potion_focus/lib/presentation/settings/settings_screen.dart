@@ -6,7 +6,6 @@ import 'package:potion_focus/core/theme/app_colors.dart';
 import 'package:potion_focus/main.dart';
 import 'package:potion_focus/presentation/settings/widgets/about_dialog.dart';
 import 'package:potion_focus/presentation/settings/widgets/tag_management_screen.dart';
-import 'package:potion_focus/presentation/shared/painting/background_themes.dart';
 import 'package:potion_focus/presentation/shared/widgets/background_theme_picker.dart';
 import 'package:potion_focus/presentation/shared/widgets/pixel_loading.dart';
 import 'package:potion_focus/presentation/subscription/subscription_screen.dart';
@@ -17,7 +16,6 @@ import 'package:potion_focus/services/essence_service.dart';
 import 'package:potion_focus/services/coin_service.dart';
 import 'package:potion_focus/services/quest_generation_service.dart';
 import 'package:potion_focus/services/recipe_service.dart';
-import 'package:potion_focus/services/potion_creation_service.dart';
 import 'package:potion_focus/data/repositories/potion_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -271,7 +269,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Text(
                     subtitle,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+                          color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
                         ),
                   ),
                 ],
@@ -310,7 +308,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Text(
                     subtitle,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+                          color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
                         ),
                   ),
                 ],
@@ -390,7 +388,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 ? 'Premium benefits active'
                                 : 'Upgrade for exclusive items & bonuses',
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+                                  color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
                                 ),
                           ),
                         ],
@@ -400,7 +398,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         ? Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: AppColors.legendary.withOpacity(0.2),
+                              color: AppColors.legendary.withValues(alpha: 0.2),
                               border: Border.all(color: AppColors.legendary),
                               borderRadius: BorderRadius.zero,
                             ),
@@ -471,7 +469,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                     margin: const EdgeInsets.only(bottom: 4),
                     color: isSelected
-                        ? Theme.of(context).colorScheme.primary.withOpacity(0.15)
+                        ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.15)
                         : Colors.transparent,
                     child: Text(
                       '$duration minutes',
@@ -526,7 +524,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                     margin: const EdgeInsets.only(bottom: 4),
                     color: isSelected
-                        ? Theme.of(context).colorScheme.primary.withOpacity(0.15)
+                        ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.15)
                         : Colors.transparent,
                     child: Text(
                       mode['label']!,

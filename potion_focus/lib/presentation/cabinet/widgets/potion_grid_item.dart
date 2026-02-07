@@ -60,7 +60,7 @@ class PotionGridItem extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.auto_awesome,
                     size: 14,
                     color: Colors.amber,

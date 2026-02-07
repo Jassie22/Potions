@@ -76,10 +76,9 @@ class _PixelSpinnerPainter extends CustomPainter {
     // 8 dots around a circle
     for (int i = 0; i < 8; i++) {
       final angle = (i / 8) * 2 * math.pi - (math.pi / 2);
-      final dotProgress = ((progress * 8) - i).clamp(0.0, 1.0);
       final opacity = (1.0 - ((progress * 8 - i) % 8) / 8).clamp(0.3, 1.0);
 
-      paint.color = color.withOpacity(opacity);
+      paint.color = color.withValues(alpha: opacity);
 
       final x = center + radius * math.cos(angle) - pixelSize / 2;
       final y = center + radius * math.sin(angle) - pixelSize / 2;
@@ -197,7 +196,7 @@ class _PixelPotionLoadingPainter extends CustomPainter {
     canvas.drawRect(Rect.fromLTWH(px * 6, px * 3, px, px), paint);
 
     // Bottle glass (light gray)
-    paint.color = bottleColor.withOpacity(0.4);
+    paint.color = bottleColor.withValues(alpha: 0.4);
     canvas.drawRect(Rect.fromLTWH(px * 4, px, px, px * 2), paint);
     canvas.drawRect(Rect.fromLTWH(px * 2, px * 4, px * 5, px * 6), paint);
     canvas.drawRect(Rect.fromLTWH(px * 3, px * 3, px * 3, px), paint);
@@ -220,7 +219,7 @@ class _PixelPotionLoadingPainter extends CustomPainter {
     canvas.drawRect(Rect.fromLTWH(px * 3.5, px * 0.2, px * 2, px * 0.6), paint);
 
     // Highlight on bottle
-    paint.color = Colors.white.withOpacity(0.3);
+    paint.color = Colors.white.withValues(alpha: 0.3);
     canvas.drawRect(Rect.fromLTWH(px * 2, px * 4, px, px * 3), paint);
   }
 
@@ -321,7 +320,7 @@ class _PixelSkeletonPainter extends CustomPainter {
     final shimmerWidth = size.width * 0.3;
     final shimmerX = (progress * (size.width + shimmerWidth)) - shimmerWidth;
 
-    paint.color = highlightColor.withOpacity(0.5);
+    paint.color = highlightColor.withValues(alpha: 0.5);
     canvas.drawRect(
       Rect.fromLTWH(shimmerX, 0, shimmerWidth, size.height),
       paint,
@@ -359,7 +358,7 @@ class PixelLoadingIndicator extends StatelessWidget {
             Text(
               message!,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
+                    color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
                   ),
             ),
           ],

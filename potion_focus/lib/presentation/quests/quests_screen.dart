@@ -113,7 +113,7 @@ class _QuestsScreenState extends ConsumerState<QuestsScreen> {
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface,
                       border: Border.all(
-                        color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
                         width: 3,
                       ),
                     ),
@@ -124,7 +124,7 @@ class _QuestsScreenState extends ConsumerState<QuestsScreen> {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                             border: Border.all(
                               color: Theme.of(context).colorScheme.primary,
                               width: 2,
@@ -151,7 +151,7 @@ class _QuestsScreenState extends ConsumerState<QuestsScreen> {
                               Text(
                                 'View your stats and progress',
                                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+                                      color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
                                     ),
                               ),
                             ],
@@ -163,7 +163,7 @@ class _QuestsScreenState extends ConsumerState<QuestsScreen> {
                           height: 24,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Theme.of(context).colorScheme.primary.withOpacity(0.4),
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
                               width: 2,
                             ),
                           ),

@@ -120,7 +120,7 @@ class _TagSelectorState extends ConsumerState<TagSelector> {
   @override
   Widget build(BuildContext context) {
     final selectedCount = widget.selectedTags.length;
-    final maxTags = AppConstants.maxTagsPerSession;
+    const maxTags = AppConstants.maxTagsPerSession;
     final isAtLimit = selectedCount >= maxTags;
 
     return Column(
@@ -138,12 +138,12 @@ class _TagSelectorState extends ConsumerState<TagSelector> {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: isAtLimit
-                    ? AppColors.warning.withOpacity(0.15)
-                    : AppColors.primaryLight.withOpacity(0.1),
+                    ? AppColors.warning.withValues(alpha: 0.15)
+                    : AppColors.primaryLight.withValues(alpha: 0.1),
                 border: Border.all(
                   color: isAtLimit
-                      ? AppColors.warning.withOpacity(0.5)
-                      : AppColors.primaryLight.withOpacity(0.3),
+                      ? AppColors.warning.withValues(alpha: 0.5)
+                      : AppColors.primaryLight.withValues(alpha: 0.3),
                 ),
               ),
               child: Text(
@@ -190,7 +190,7 @@ class _TagSelectorState extends ConsumerState<TagSelector> {
                   duration: const Duration(milliseconds: 150),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: isSelected ? tagColor.withOpacity(0.3) : Colors.transparent,
+                    color: isSelected ? tagColor.withValues(alpha: 0.3) : Colors.transparent,
                     border: Border.all(
                       color: isSelected ? tagColor : Colors.grey.shade400,
                       width: isSelected ? 2 : 1,

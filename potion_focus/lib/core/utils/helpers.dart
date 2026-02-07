@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:uuid/uuid.dart';
 
 class Helpers {
-  static final _uuid = Uuid();
+  static const _uuid = Uuid();
   static final _random = Random();
 
   // Generate unique ID

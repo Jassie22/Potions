@@ -27,9 +27,9 @@ class RecipeThumbnail extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: rarityColor.withOpacity(isUnlocked ? 0.08 : 0.04),
+          color: rarityColor.withValues(alpha: isUnlocked ? 0.08 : 0.04),
           border: Border.all(
-            color: rarityColor.withOpacity(isUnlocked ? 0.3 : 0.15),
+            color: rarityColor.withValues(alpha: isUnlocked ? 0.3 : 0.15),
             width: 2,
           ),
         ),
@@ -61,7 +61,7 @@ class RecipeThumbnail extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.5),
+                      color: Colors.black.withValues(alpha: 0.5),
                       border: Border.all(color: Colors.black54, width: 1),
                     ),
                     child: const Icon(
@@ -80,7 +80,7 @@ class RecipeThumbnail extends StatelessWidget {
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: isUnlocked
                         ? const Color(0xFF3D2B1F)
-                        : const Color(0xFF3D2B1F).withOpacity(0.4),
+                        : const Color(0xFF3D2B1F).withValues(alpha: 0.4),
                     fontWeight: FontWeight.w600,
                     fontSize: 9,
                   ),

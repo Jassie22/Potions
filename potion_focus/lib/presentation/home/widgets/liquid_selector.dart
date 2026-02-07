@@ -62,8 +62,8 @@ class LiquidSelector extends ConsumerWidget {
                   width: 60,
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? preset.primaryColor.withOpacity(0.3)
-                        : Theme.of(context).colorScheme.surface.withOpacity(0.6),
+                        ? preset.primaryColor.withValues(alpha: 0.3)
+                        : Theme.of(context).colorScheme.surface.withValues(alpha: 0.6),
                     borderRadius: BorderRadius.zero,
                     border: isSelected
                         ? Border.all(
@@ -71,7 +71,7 @@ class LiquidSelector extends ConsumerWidget {
                             width: 2,
                           )
                         : Border.all(
-                            color: Colors.white.withOpacity(0.15),
+                            color: Colors.white.withValues(alpha: 0.15),
                             width: 1,
                           ),
                   ),
@@ -86,7 +86,7 @@ class LiquidSelector extends ConsumerWidget {
                           color: preset.primaryColor,
                           borderRadius: BorderRadius.zero,
                           border: Border.all(
-                            color: Colors.black.withOpacity(0.6),
+                            color: Colors.black.withValues(alpha: 0.6),
                             width: 2,
                           ),
                         ),
@@ -108,7 +108,7 @@ class LiquidSelector extends ConsumerWidget {
                           fontSize: 8,
                           color: isSelected
                               ? Colors.white
-                              : Colors.white.withOpacity(0.5),
+                              : Colors.white.withValues(alpha: 0.5),
                           fontWeight:
                               isSelected ? FontWeight.w700 : FontWeight.w500,
                         ),

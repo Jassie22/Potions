@@ -49,7 +49,7 @@ class ShelfRow extends StatelessWidget {
               Text(
                 '(${potions.length})',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: rarityColor.withOpacity(0.7),
+                      color: rarityColor.withValues(alpha: 0.7),
                     ),
               ),
             ],

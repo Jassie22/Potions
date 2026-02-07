@@ -175,14 +175,14 @@ class _EmptyStatePainter extends CustomPainter {
 
     // Floating dust motes
     final rng = math.Random(42);
-    paint.color = const Color(0xFFD4A574).withOpacity(0.3);
+    paint.color = const Color(0xFFD4A574).withValues(alpha: 0.3);
     for (int i = 0; i < 6; i++) {
       final phase = (animationValue + i * 0.167) % 1.0;
       final x = _snap(cx - 30 + rng.nextDouble() * 60);
       final baseYPos = size.height * 0.3 + rng.nextDouble() * size.height * 0.4;
       final y = _snap(baseYPos + math.sin(phase * math.pi * 2) * 8);
       final opacity = (0.3 * math.sin(phase * math.pi)).abs();
-      paint.color = const Color(0xFFD4A574).withOpacity(opacity);
+      paint.color = const Color(0xFFD4A574).withValues(alpha: opacity);
       canvas.drawRect(Rect.fromLTWH(x, y, _px, _px), paint);
     }
   }
@@ -197,14 +197,14 @@ class _EmptyStatePainter extends CustomPainter {
     final cy = size.height / 2;
 
     // Bottle body (tilted, lying down)
-    paint.color = const Color(0xFF88CCEE).withOpacity(0.4);
+    paint.color = const Color(0xFF88CCEE).withValues(alpha: 0.4);
     canvas.drawRect(
       Rect.fromLTWH(_snap(cx - 20), _snap(cy), _px * 10, _px * 6),
       paint,
     );
 
     // Bottle neck
-    paint.color = const Color(0xFF88CCEE).withOpacity(0.3);
+    paint.color = const Color(0xFF88CCEE).withValues(alpha: 0.3);
     canvas.drawRect(
       Rect.fromLTWH(_snap(cx + 20), _snap(cy + _px), _px * 4, _px * 4),
       paint,
@@ -232,7 +232,7 @@ class _EmptyStatePainter extends CustomPainter {
 
     // Animated "zzz" - sleeping effect
     final zPhase = animationValue;
-    paint.color = Colors.grey[400]!.withOpacity(0.6);
+    paint.color = Colors.grey[400]!.withValues(alpha: 0.6);
 
     // First z (smallest, lowest)
     final z1Y = _snap(cy - 10 - math.sin(zPhase * math.pi * 2) * 4);
@@ -288,7 +288,7 @@ class _EmptyStatePainter extends CustomPainter {
     );
 
     // Page lines (faint)
-    paint.color = const Color(0xFFCCBB99).withOpacity(0.5);
+    paint.color = const Color(0xFFCCBB99).withValues(alpha: 0.5);
     for (int i = 0; i < 4; i++) {
       // Left page lines
       canvas.drawRect(
@@ -304,7 +304,7 @@ class _EmptyStatePainter extends CustomPainter {
 
     // Question mark in center (animated pulse)
     final pulse = 0.7 + 0.3 * math.sin(animationValue * math.pi * 2);
-    paint.color = Colors.grey[400]!.withOpacity(pulse * 0.5);
+    paint.color = Colors.grey[400]!.withValues(alpha: pulse * 0.5);
 
     // Question mark dot
     canvas.drawRect(
@@ -361,7 +361,7 @@ class _EmptyStatePainter extends CustomPainter {
     );
 
     // Empty interior shadow
-    paint.color = const Color(0xFF4A3728).withOpacity(0.5);
+    paint.color = const Color(0xFF4A3728).withValues(alpha: 0.5);
     canvas.drawRect(
       Rect.fromLTWH(_snap(cx - 12), _snap(cy - 6), _px * 6, _px * 4),
       paint,
@@ -373,7 +373,7 @@ class _EmptyStatePainter extends CustomPainter {
       final phase = (animationValue + i * 0.33) % 1.0;
       final x = _snap(cx - 10 + rng.nextDouble() * 20);
       final y = _snap(cy - 20 - phase * 20);
-      paint.color = const Color(0xFFD4A574).withOpacity((1 - phase) * 0.3);
+      paint.color = const Color(0xFFD4A574).withValues(alpha: (1 - phase) * 0.3);
       canvas.drawRect(Rect.fromLTWH(x, y, _px, _px), paint);
     }
   }
@@ -416,7 +416,7 @@ class _EmptyStatePainter extends CustomPainter {
     );
 
     // Empty dashed lines (to show no text)
-    paint.color = Colors.grey[400]!.withOpacity(0.5);
+    paint.color = Colors.grey[400]!.withValues(alpha: 0.5);
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < 3; j++) {
         canvas.drawRect(
@@ -433,7 +433,7 @@ class _EmptyStatePainter extends CustomPainter {
 
     // Plus sign (add new)
     final pulse = 0.6 + 0.4 * math.sin(animationValue * math.pi * 2);
-    paint.color = const Color(0xFF8B2FC9).withOpacity(pulse * 0.4);
+    paint.color = const Color(0xFF8B2FC9).withValues(alpha: pulse * 0.4);
 
     // Horizontal line of plus
     canvas.drawRect(

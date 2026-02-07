@@ -86,7 +86,7 @@ class BottlePainter extends CustomPainter {
 
     // Reusable paints — all with anti-alias OFF for crisp pixels
     final glassPaint = Paint()
-      ..color = glassColor.withOpacity(0.18)
+      ..color = glassColor.withValues(alpha: 0.18)
       ..style = PaintingStyle.fill
       ..isAntiAlias = false;
 
@@ -101,12 +101,12 @@ class BottlePainter extends CustomPainter {
       ..isAntiAlias = false;
 
     final highlightPaint = Paint()
-      ..color = Colors.white.withOpacity(0.45)
+      ..color = Colors.white.withValues(alpha: 0.45)
       ..style = PaintingStyle.fill
       ..isAntiAlias = false;
 
     final decorPaint = Paint()
-      ..color = glassColor.withOpacity(0.25)
+      ..color = glassColor.withValues(alpha: 0.25)
       ..style = PaintingStyle.fill
       ..isAntiAlias = false;
 
@@ -115,13 +115,13 @@ class BottlePainter extends CustomPainter {
 
     // Calculate tilt offset per column (slosh effect)
     // tiltX ranges from -1 to 1, maps to ±2 rows of offset at the edges
-    final maxTiltRows = 2;
+    const maxTiltRows = 2;
     final centerCol = bottle.gridWidth / 2.0;
 
     // Calculate vertical tilt offset (forward/back tilt shifts liquid level)
     // tiltY > 0 (tilting forward/up): liquid sloshes down, fewer rows visible
     // tiltY < 0 (tilting back/down): liquid sloshes up, more rows visible
-    final maxVerticalTiltRows = 3;
+    const maxVerticalTiltRows = 3;
     final verticalTiltOffset = (tiltY * maxVerticalTiltRows).round();
 
     // Draw each cell
@@ -194,10 +194,6 @@ class BottlePainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..isAntiAlias = false;
 
-    // Skip detailed internal borders at smaller sizes to avoid grid artifacts
-    // Increased threshold from 80 to 120 for better coverage
-    final skipInternalBorders = size.width < 120;
-
     for (int row = 0; row < bottle.gridHeight; row++) {
       for (int col = 0; col < bottle.gridWidth; col++) {
         final cell = bottle.grid[row][col];
@@ -255,7 +251,7 @@ class BottlePainter extends CustomPainter {
         canvas.drawRect(rect, paint);
         if (col == sheenCol || col == sheenCol + 1) {
           final sheenPaint = Paint()
-            ..color = (liquidSecondaryColor ?? Colors.white).withOpacity(0.4)
+            ..color = (liquidSecondaryColor ?? Colors.white).withValues(alpha: 0.4)
             ..style = PaintingStyle.fill
             ..isAntiAlias = false;
           canvas.drawRect(rect, sheenPaint);
@@ -279,7 +275,7 @@ class BottlePainter extends CustomPainter {
         final sparklePhase = (animationValue * 3 + hash * 0.137) % 1.0;
         if (sparklePhase < 0.15) {
           final sparklePaint = Paint()
-            ..color = Colors.white.withOpacity(0.7)
+            ..color = Colors.white.withValues(alpha: 0.7)
             ..style = PaintingStyle.fill
             ..isAntiAlias = false;
           canvas.drawRect(rect, sparklePaint);
@@ -299,7 +295,7 @@ class BottlePainter extends CustomPainter {
         final sparklePhase = (animationValue * 4 + hash * 0.11) % 1.0;
         if (sparklePhase < 0.2) {
           final sparklePaint = Paint()
-            ..color = Colors.white.withOpacity(0.8)
+            ..color = Colors.white.withValues(alpha: 0.8)
             ..style = PaintingStyle.fill
             ..isAntiAlias = false;
           canvas.drawRect(rect, sparklePaint);

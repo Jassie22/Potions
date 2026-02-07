@@ -112,7 +112,7 @@ class BackgroundThemePainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..isAntiAlias = false;
     for (int i = 0; i < 60; i++) {
-      paint.color = const Color(0xFF8B7355).withOpacity(rng.nextDouble() * 0.06);
+      paint.color = const Color(0xFF8B7355).withValues(alpha: rng.nextDouble() * 0.06);
       canvas.drawRect(
         Rect.fromLTWH(
           _snap(rng.nextDouble() * size.width),
@@ -138,7 +138,7 @@ class BackgroundThemePainter extends CustomPainter {
 
     // Ground vegetation at bottom
     final groundRng = math.Random(12);
-    paint.color = const Color(0xFF143D2B).withOpacity(0.25);
+    paint.color = const Color(0xFF143D2B).withValues(alpha: 0.25);
     for (int i = 0; i < 30; i++) {
       final gx = _snap(groundRng.nextDouble() * size.width);
       final gh = _px * (2 + groundRng.nextInt(4));
@@ -150,7 +150,7 @@ class BackgroundThemePainter extends CustomPainter {
     for (int layer = 0; layer < 2; layer++) {
       final layerOpacity = layer == 0 ? 0.15 : 0.3;
       final treePaint = Paint()
-        ..color = const Color(0xFF143D2B).withOpacity(layerOpacity)
+        ..color = const Color(0xFF143D2B).withValues(alpha: layerOpacity)
         ..style = PaintingStyle.fill
         ..isAntiAlias = false;
 
@@ -197,11 +197,11 @@ class BackgroundThemePainter extends CustomPainter {
 
       // Glow halo
       if (glow > 0.3) {
-        fireflyPaint.color = const Color(0xFFFFFF00).withOpacity(glow * 0.15);
+        fireflyPaint.color = const Color(0xFFFFFF00).withValues(alpha: glow * 0.15);
         canvas.drawRect(Rect.fromLTWH(x - _px, y - _px, _px * 3, _px * 3), fireflyPaint);
       }
       // Core
-      fireflyPaint.color = const Color(0xFFFFFF66).withOpacity(glow * 0.8);
+      fireflyPaint.color = const Color(0xFFFFFF66).withValues(alpha: glow * 0.8);
       canvas.drawRect(Rect.fromLTWH(x, y, _px, _px), fireflyPaint);
     }
   }
@@ -220,14 +220,14 @@ class BackgroundThemePainter extends CustomPainter {
     // Pixel moon (top right)
     final moonX = _snap(size.width * 0.78);
     final moonY = _snap(size.height * 0.12);
-    final moonSize = _px * 6;
-    paint.color = const Color(0xFFF5F5DC).withOpacity(0.8);
+    const moonSize = _px * 6;
+    paint.color = const Color(0xFFF5F5DC).withValues(alpha: 0.8);
     canvas.drawRect(Rect.fromLTWH(moonX, moonY, moonSize, moonSize), paint);
-    paint.color = const Color(0xFFFFFFE0).withOpacity(0.6);
+    paint.color = const Color(0xFFFFFFE0).withValues(alpha: 0.6);
     canvas.drawRect(Rect.fromLTWH(moonX - _px, moonY + _px, _px, moonSize - _px * 2), paint);
     canvas.drawRect(Rect.fromLTWH(moonX + moonSize, moonY + _px, _px, moonSize - _px * 2), paint);
     // Moon glow
-    paint.color = const Color(0xFFF5F5DC).withOpacity(0.08);
+    paint.color = const Color(0xFFF5F5DC).withValues(alpha: 0.08);
     for (int ring = 1; ring <= 3; ring++) {
       final r = ring * _px * 2;
       canvas.drawRect(Rect.fromLTWH(moonX - r, moonY - r, moonSize + r * 2, moonSize + r * 2), paint);
@@ -244,7 +244,7 @@ class BackgroundThemePainter extends CustomPainter {
       final phase = (animationValue + i * 0.014) % 1.0;
       final twinkle = (math.sin(phase * math.pi * 2) * 0.4 + 0.6);
       final brightness = 0.3 + rng.nextDouble() * 0.5;
-      starPaint.color = Colors.white.withOpacity(twinkle * brightness);
+      starPaint.color = Colors.white.withValues(alpha: twinkle * brightness);
       final starSize = rng.nextDouble() < 0.15 ? _px * 2 : _px;
       canvas.drawRect(Rect.fromLTWH(x, y, starSize, starSize), starPaint);
     }
@@ -264,7 +264,7 @@ class BackgroundThemePainter extends CustomPainter {
 
       for (int t = 0; t < 10; t++) {
         final opacity = (1.0 - t / 10.0) * (1.0 - progress) * 0.7;
-        trailPaint.color = Colors.white.withOpacity(opacity.clamp(0.0, 1.0));
+        trailPaint.color = Colors.white.withValues(alpha: opacity.clamp(0.0, 1.0));
         canvas.drawRect(
           Rect.fromLTWH(_snap(x - t * _px * 1.8), _snap(y - t * _px), _px, _px),
           trailPaint,
@@ -285,27 +285,27 @@ class BackgroundThemePainter extends CustomPainter {
       ..isAntiAlias = false;
 
     // Shelf at bottom
-    paint.color = const Color(0xFF1A0E08).withOpacity(0.3);
+    paint.color = const Color(0xFF1A0E08).withValues(alpha: 0.3);
     canvas.drawRect(
       Rect.fromLTWH(0, _snap(size.height * 0.85), size.width, size.height * 0.15),
       paint,
     );
     // Shelf line (2px thick)
-    paint.color = const Color(0xFF5D4E37).withOpacity(0.4);
+    paint.color = const Color(0xFF5D4E37).withValues(alpha: 0.4);
     canvas.drawRect(
       Rect.fromLTWH(0, _snap(size.height * 0.85), size.width, _px / 2),
       paint,
     );
 
     // Warm glow pixel cluster at center-bottom
-    paint.color = const Color(0xFFD4A574).withOpacity(0.06);
+    paint.color = const Color(0xFFD4A574).withValues(alpha: 0.06);
     final cx = _snap(size.width * 0.5);
     final cy = _snap(size.height * 0.7);
     for (int dx = -3; dx <= 3; dx++) {
       for (int dy = -2; dy <= 2; dy++) {
         final dist = dx.abs() + dy.abs();
         if (dist > 4) continue;
-        paint.color = const Color(0xFFD4A574).withOpacity(0.08 - dist * 0.015);
+        paint.color = const Color(0xFFD4A574).withValues(alpha: 0.08 - dist * 0.015);
         canvas.drawRect(
           Rect.fromLTWH(cx + dx * _px * 3, cy + dy * _px * 3, _px * 3, _px * 3),
           paint,
@@ -331,7 +331,7 @@ class BackgroundThemePainter extends CustomPainter {
     for (int i = 0; i < 8; i++) {
       final baseX = kelpRng.nextDouble() * size.width;
       final kelpHeight = 40 + kelpRng.nextDouble() * 80;
-      paint.color = const Color(0xFF006644).withOpacity(0.25);
+      paint.color = const Color(0xFF006644).withValues(alpha: 0.25);
 
       for (double dy = 0; dy < kelpHeight; dy += _px * 2) {
         final swayPhase = (animationValue + i * 0.1 + dy / 100) % 1.0;
@@ -351,7 +351,7 @@ class BackgroundThemePainter extends CustomPainter {
       final y = _snap(baseY + math.sin(phase * math.pi * 4) * _px * 3);
 
       // Simple pixel fish (body + tail)
-      paint.color = const Color(0xFF006688).withOpacity(0.3);
+      paint.color = const Color(0xFF006688).withValues(alpha: 0.3);
       canvas.drawRect(Rect.fromLTWH(x, y, _px * 3, _px * 2), paint); // body
       canvas.drawRect(Rect.fromLTWH(x - _px, y + _px / 2, _px, _px), paint); // tail
     }
@@ -363,7 +363,7 @@ class BackgroundThemePainter extends CustomPainter {
       final baseY = rng.nextDouble() * size.height;
       final phase = (animationValue + i * 0.05) % 1.0;
       final y = _snap(baseY - phase * size.height * 0.25);
-      paint.color = const Color(0xFF00A8CC).withOpacity((1.0 - phase) * 0.25);
+      paint.color = const Color(0xFF00A8CC).withValues(alpha: (1.0 - phase) * 0.25);
       final bSize = rng.nextDouble() < 0.3 ? _px * 3 : _px * 2;
       // Draw hollow pixel square (outline only)
       canvas.drawRect(Rect.fromLTWH(x, y, bSize, _px), paint);
@@ -382,7 +382,7 @@ class BackgroundThemePainter extends CustomPainter {
       final y = _snap(bioRng.nextDouble() * size.height);
       final phase = (animationValue * 1.5 + i * 0.067) % 1.0;
       final glow = math.sin(phase * math.pi * 2) * 0.5 + 0.5;
-      bioPaint.color = const Color(0xFF00FFFF).withOpacity(glow * 0.3);
+      bioPaint.color = const Color(0xFF00FFFF).withValues(alpha: glow * 0.3);
       canvas.drawRect(Rect.fromLTWH(x, y, _px, _px), bioPaint);
     }
   }
@@ -420,14 +420,14 @@ class BackgroundThemePainter extends CustomPainter {
       for (double dy = 0; dy < height; dy += _px) {
         final rowWidth = width * (1 - dy / height);
         final brightness = 0.08 + (1 - dy / height) * 0.1;
-        paint.color = crystalColor.withOpacity(brightness);
+        paint.color = crystalColor.withValues(alpha: brightness);
         canvas.drawRect(
           Rect.fromLTWH(x - rowWidth / 2, size.height - dy - _px, rowWidth, _px),
           paint,
         );
       }
       // Crystal tip highlight
-      paint.color = crystalColor.withOpacity(0.4);
+      paint.color = crystalColor.withValues(alpha: 0.4);
       canvas.drawRect(Rect.fromLTWH(x - _px / 2, size.height - height - _px, _px, _px), paint);
     }
 
@@ -439,7 +439,7 @@ class BackgroundThemePainter extends CustomPainter {
 
       for (double dy = 0; dy < height; dy += _px) {
         final rowWidth = (_px * 2) * (1 - dy / height);
-        paint.color = crystalColor.withOpacity(0.08 + (1 - dy / height) * 0.06);
+        paint.color = crystalColor.withValues(alpha: 0.08 + (1 - dy / height) * 0.06);
         canvas.drawRect(
           Rect.fromLTWH(x - rowWidth / 2, dy, rowWidth, _px),
           paint,
@@ -463,7 +463,7 @@ class BackgroundThemePainter extends CustomPainter {
       for (int c = 0; c < refractionColors.length; c++) {
         final colorPhase = (phase + c * 0.1) % 1.0;
         final opacity = math.sin(colorPhase * math.pi) * 0.12;
-        paint.color = refractionColors[c].withOpacity(opacity.clamp(0.0, 0.15));
+        paint.color = refractionColors[c].withValues(alpha: opacity.clamp(0.0, 0.15));
 
         // Draw diagonal light beam
         for (int step = 0; step < 8; step++) {
@@ -490,7 +490,7 @@ class BackgroundThemePainter extends CustomPainter {
       final phase = (animationValue * 1.5 + i * 0.04) % 1.0;
       final twinkle = (math.sin(phase * math.pi * 2) * 0.5 + 0.5);
       final sparkleColor = crystalColors[i % crystalColors.length];
-      shimPaint.color = sparkleColor.withOpacity(twinkle * 0.35);
+      shimPaint.color = sparkleColor.withValues(alpha: twinkle * 0.35);
       canvas.drawRect(Rect.fromLTWH(sx, sy, _px, _px), shimPaint);
     }
 
@@ -502,7 +502,7 @@ class BackgroundThemePainter extends CustomPainter {
       final dropX = _snap(rng.nextDouble() * size.width);
       final phase = (animationValue * 2 + i * 0.167) % 1.0;
       final dropY = _snap(phase * size.height);
-      dropPaint.color = const Color(0xFF88CCFF).withOpacity((1.0 - phase) * 0.4);
+      dropPaint.color = const Color(0xFF88CCFF).withValues(alpha: (1.0 - phase) * 0.4);
       canvas.drawRect(Rect.fromLTWH(dropX, dropY, _px, _px * 2), dropPaint);
     }
   }
@@ -533,7 +533,7 @@ class BackgroundThemePainter extends CustomPainter {
         const Color(0xFFFFB6C1),
         const Color(0xFFFFC0CB),
         rng.nextDouble(),
-      )!.withOpacity(opacity);
+      )!.withValues(alpha: opacity);
 
       // Small pixel petal (2x1 or 1x2)
       if (rng.nextBool()) {
@@ -545,7 +545,7 @@ class BackgroundThemePainter extends CustomPainter {
 
     // Pink glow pixels at center
     final glowPaint = Paint()
-      ..color = const Color(0xFFFF69B4).withOpacity(0.04)
+      ..color = const Color(0xFFFF69B4).withValues(alpha: 0.04)
       ..style = PaintingStyle.fill
       ..isAntiAlias = false;
     final cx = _snap(size.width * 0.5);
@@ -576,7 +576,7 @@ class BackgroundThemePainter extends CustomPainter {
     // Distant spiral galaxy (top left)
     final galaxyX = _snap(size.width * 0.2);
     final galaxyY = _snap(size.height * 0.15);
-    paint.color = const Color(0xFF9966FF).withOpacity(0.08);
+    paint.color = const Color(0xFF9966FF).withValues(alpha: 0.08);
     for (int ring = 0; ring < 4; ring++) {
       final r = ring * _px * 3;
       for (double angle = 0; angle < math.pi * 2; angle += 0.5) {
@@ -587,7 +587,7 @@ class BackgroundThemePainter extends CustomPainter {
       }
     }
     // Galaxy core
-    paint.color = const Color(0xFFDDCCFF).withOpacity(0.2);
+    paint.color = const Color(0xFFDDCCFF).withValues(alpha: 0.2);
     canvas.drawRect(Rect.fromLTWH(galaxyX - _px, galaxyY - _px, _px * 3, _px * 3), paint);
 
     // Static pixel stars (more stars)
@@ -600,7 +600,7 @@ class BackgroundThemePainter extends CustomPainter {
       final y = _snap(rng.nextDouble() * size.height * 0.85);
       final phase = (animationValue + i * 0.0125) % 1.0;
       final twinkle = (math.sin(phase * math.pi * 2) * 0.3 + 0.7);
-      starPaint.color = Colors.white.withOpacity((0.15 + rng.nextDouble() * 0.35) * twinkle);
+      starPaint.color = Colors.white.withValues(alpha: (0.15 + rng.nextDouble() * 0.35) * twinkle);
       canvas.drawRect(Rect.fromLTWH(x, y, _px, _px), starPaint);
     }
 
@@ -620,7 +620,7 @@ class BackgroundThemePainter extends CustomPainter {
       // Draw pixel trail (longer trail)
       for (int t = 0; t < 12; t++) {
         final opacity = (1.0 - t / 12.0) * (1.0 - progress) * 0.6;
-        trailPaint.color = Colors.white.withOpacity(opacity.clamp(0.0, 1.0));
+        trailPaint.color = Colors.white.withValues(alpha: opacity.clamp(0.0, 1.0));
         canvas.drawRect(
           Rect.fromLTWH(_snap(x - t * _px * 2), _snap(y - t * _px), _px, _px),
           trailPaint,
@@ -637,16 +637,16 @@ class BackgroundThemePainter extends CustomPainter {
     for (int t = 0; t < 20; t++) {
       final tailOpacity = (1.0 - t / 20.0) * 0.35;
       final tailColor = t < 8 ? const Color(0xFFFFFFCC) : const Color(0xFF99CCFF);
-      trailPaint.color = tailColor.withOpacity(tailOpacity.clamp(0.0, 0.4));
+      trailPaint.color = tailColor.withValues(alpha: tailOpacity.clamp(0.0, 0.4));
       canvas.drawRect(
         Rect.fromLTWH(_snap(cometX + t * _px * 2.5), _snap(cometY - t * _px * 0.8), _px * 2, _px * 2),
         trailPaint,
       );
     }
     // Comet head (bright)
-    paint.color = const Color(0xFFFFFFFF).withOpacity(0.9);
+    paint.color = const Color(0xFFFFFFFF).withValues(alpha: 0.9);
     canvas.drawRect(Rect.fromLTWH(cometX, cometY, _px * 3, _px * 3), paint);
-    paint.color = const Color(0xFF99DDFF).withOpacity(0.5);
+    paint.color = const Color(0xFF99DDFF).withValues(alpha: 0.5);
     canvas.drawRect(Rect.fromLTWH(cometX - _px, cometY - _px, _px * 5, _px * 5), paint);
   }
 
@@ -663,7 +663,7 @@ class BackgroundThemePainter extends CustomPainter {
 
     // Shelf lines
     for (final shelfY in [_snap(size.height * 0.75), _snap(size.height * 0.88)]) {
-      paint.color = const Color(0xFF5D4E37).withOpacity(0.3);
+      paint.color = const Color(0xFF5D4E37).withValues(alpha: 0.3);
       canvas.drawRect(Rect.fromLTWH(0, shelfY, size.width, _px), paint);
 
       // Pixel book rectangles on shelf
@@ -676,7 +676,7 @@ class BackgroundThemePainter extends CustomPainter {
           const Color(0xFF4A3728),
           const Color(0xFF6B5B4A),
           rng.nextDouble(),
-        )!.withOpacity(0.2 + rng.nextDouble() * 0.1);
+        )!.withValues(alpha: 0.2 + rng.nextDouble() * 0.1);
 
         canvas.drawRect(
           Rect.fromLTWH(x, shelfY - bookHeight, bookWidth, bookHeight),
@@ -687,7 +687,7 @@ class BackgroundThemePainter extends CustomPainter {
     }
 
     // Warm glow pixel cluster
-    paint.color = const Color(0xFFD4A574).withOpacity(0.06);
+    paint.color = const Color(0xFFD4A574).withValues(alpha: 0.06);
     final cx = _snap(size.width * 0.6);
     final cy = _snap(size.height * 0.3);
     for (int dx = -2; dx <= 2; dx++) {
@@ -707,7 +707,7 @@ class BackgroundThemePainter extends CustomPainter {
       final by = _snap(rng2.nextDouble() * size.height * 0.7);
       final phase = (animationValue + i * 0.1) % 1.0;
       final drift = _snap(math.sin(phase * math.pi * 2) * 4);
-      paint.color = const Color(0xFFD4A574).withOpacity(
+      paint.color = const Color(0xFFD4A574).withValues(alpha: 
         (math.sin(phase * math.pi) * 0.12).clamp(0.0, 0.12),
       );
       canvas.drawRect(Rect.fromLTWH(bx + drift, by, _px, _px), paint);
@@ -742,12 +742,12 @@ class BackgroundThemePainter extends CustomPainter {
         final waveOffset = math.sin(phase * math.pi * 4) * _px * 4;
         final intensity = math.sin(phase * math.pi * 2 + band) * 0.5 + 0.5;
 
-        paint.color = bandColor.withOpacity(intensity * 0.15);
+        paint.color = bandColor.withValues(alpha: intensity * 0.15);
 
         // Draw vertical streak
         for (int dy = 0; dy < 8; dy++) {
           final fadeOpacity = (1.0 - dy / 8.0) * intensity * 0.12;
-          paint.color = bandColor.withOpacity(fadeOpacity.clamp(0.0, 0.15));
+          paint.color = bandColor.withValues(alpha: fadeOpacity.clamp(0.0, 0.15));
           canvas.drawRect(
             Rect.fromLTWH(
               _snap(x),
@@ -771,7 +771,7 @@ class BackgroundThemePainter extends CustomPainter {
       final y = _snap(rng.nextDouble() * size.height * 0.4);
       final phase = (animationValue + i * 0.033) % 1.0;
       final twinkle = (math.sin(phase * math.pi * 2) * 0.4 + 0.5);
-      starPaint.color = Colors.white.withOpacity(twinkle * 0.4);
+      starPaint.color = Colors.white.withValues(alpha: twinkle * 0.4);
       canvas.drawRect(Rect.fromLTWH(x, y, _px, _px), starPaint);
     }
   }
@@ -805,7 +805,7 @@ class BackgroundThemePainter extends CustomPainter {
           final dist = (dx * dx + dy * dy).toDouble();
           if (dist > 9) continue;
           final opacity = (1.0 - dist / 10) * 0.08;
-          paint.color = nebulaColor.withOpacity(opacity.clamp(0.0, 0.1));
+          paint.color = nebulaColor.withValues(alpha: opacity.clamp(0.0, 0.1));
           canvas.drawRect(
             Rect.fromLTWH(
               cx + dx * _px * 4,
@@ -831,7 +831,7 @@ class BackgroundThemePainter extends CustomPainter {
       final brightness = rng.nextDouble();
       final phase = (animationValue * 0.5 + i * 0.0125) % 1.0;
       final twinkle = (math.sin(phase * math.pi * 2) * 0.3 + 0.7);
-      starPaint.color = Colors.white.withOpacity(brightness * twinkle * 0.5);
+      starPaint.color = Colors.white.withValues(alpha: brightness * twinkle * 0.5);
       canvas.drawRect(Rect.fromLTWH(x, y, _px, _px), starPaint);
     }
 
@@ -848,7 +848,7 @@ class BackgroundThemePainter extends CustomPainter {
           final dist = (dx.abs() + dy.abs());
           if (dist > 3) continue;
           final opacity = (1.0 - dist / 4) * pulse * 0.15;
-          paint.color = const Color(0xFFE0E0FF).withOpacity(opacity.clamp(0.0, 0.2));
+          paint.color = const Color(0xFFE0E0FF).withValues(alpha: opacity.clamp(0.0, 0.2));
           canvas.drawRect(
             Rect.fromLTWH(gx + dx * _px * 2, gy + dy * _px * 2, _px * 2, _px * 2),
             paint,
@@ -886,7 +886,7 @@ class BackgroundThemePainter extends CustomPainter {
     );
 
     // Fireplace arch (pixel blocks)
-    paint.color = const Color(0xFF4A3728).withOpacity(0.8);
+    paint.color = const Color(0xFF4A3728).withValues(alpha: 0.8);
     for (double x = fireplaceX - _px * 2; x < fireplaceX + fireplaceWidth + _px * 2; x += _px * 2) {
       canvas.drawRect(
         Rect.fromLTWH(_snap(x), fireplaceY - _px * 2, _px * 2, _px * 4),
@@ -916,7 +916,7 @@ class BackgroundThemePainter extends CustomPainter {
         final wobble = math.sin(phase * math.pi * 4 + dy / 10) * _px * 2;
         final opacity = (1.0 - t) * 0.7;
 
-        paint.color = flameColor.withOpacity(opacity.clamp(0.0, 0.8));
+        paint.color = flameColor.withValues(alpha: opacity.clamp(0.0, 0.8));
         canvas.drawRect(
           Rect.fromLTWH(
             _snap(baseX + wobble),
@@ -932,7 +932,7 @@ class BackgroundThemePainter extends CustomPainter {
     // Warm ambient glow spreading from fire
     for (int ring = 0; ring < 6; ring++) {
       final glowOpacity = (0.08 - ring * 0.012).clamp(0.0, 0.1);
-      paint.color = const Color(0xFFFF6B00).withOpacity(glowOpacity);
+      paint.color = const Color(0xFFFF6B00).withValues(alpha: glowOpacity);
 
       final ringRadius = (ring + 1) * _px * 8;
       final cx = size.width / 2;
@@ -958,7 +958,7 @@ class BackgroundThemePainter extends CustomPainter {
       final x = _snap(startX + math.sin(phase * math.pi * 3) * 20);
       final y = _snap(size.height - phase * size.height * 0.4);
       final opacity = (1.0 - phase) * 0.6;
-      emberPaint.color = const Color(0xFFFF6B00).withOpacity(opacity.clamp(0.0, 0.7));
+      emberPaint.color = const Color(0xFFFF6B00).withValues(alpha: opacity.clamp(0.0, 0.7));
       canvas.drawRect(Rect.fromLTWH(x, y, _px, _px), emberPaint);
     }
   }

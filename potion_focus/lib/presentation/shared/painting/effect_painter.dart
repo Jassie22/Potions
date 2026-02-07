@@ -40,7 +40,7 @@ class EffectPainter extends CustomPainter {
     final pixelSize = size.width / 16;
     final opacity = 0.15 + animationValue * 0.2;
     final paint = Paint()
-      ..color = color.withOpacity(opacity)
+      ..color = color.withValues(alpha: opacity)
       ..style = PaintingStyle.fill
       ..isAntiAlias = false;
 
@@ -81,7 +81,7 @@ class EffectPainter extends CustomPainter {
 
       if (sparkleOpacity < 0.2) continue;
 
-      paint.color = Colors.white.withOpacity(sparkleOpacity);
+      paint.color = Colors.white.withValues(alpha: sparkleOpacity);
 
       // Snap to pixel grid
       final px = (x / pixelSize).floor() * pixelSize;
@@ -111,7 +111,7 @@ class EffectPainter extends CustomPainter {
 
       if (opacity < 0.05) continue;
 
-      paint.color = color.withOpacity(opacity);
+      paint.color = color.withValues(alpha: opacity);
 
       // Snap to grid and draw 2x2 pixel block
       final px = (x / pixelSize).floor() * pixelSize;
@@ -129,7 +129,7 @@ class EffectPainter extends CustomPainter {
 
     // Outer pixel glow ring
     final glowPaint = Paint()
-      ..color = color.withOpacity(0.15 + animationValue * 0.08)
+      ..color = color.withValues(alpha: 0.15 + animationValue * 0.08)
       ..style = PaintingStyle.fill
       ..isAntiAlias = false;
 
@@ -144,7 +144,7 @@ class EffectPainter extends CustomPainter {
 
     // Orbiting pixel sparkles
     final sparkPaint = Paint()
-      ..color = Colors.white.withOpacity(0.7)
+      ..color = Colors.white.withValues(alpha: 0.7)
       ..style = PaintingStyle.fill
       ..isAntiAlias = false;
 

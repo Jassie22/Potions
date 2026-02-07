@@ -50,7 +50,7 @@ class RecipeCard extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: rarityColor.withOpacity(0.2),
+                    color: rarityColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.zero,
                   ),
                   child: Icon(
@@ -86,7 +86,7 @@ class RecipeCard extends ConsumerWidget {
 
                 // Unlock status
                 if (isUnlocked)
-                  Icon(Icons.check_circle, color: Colors.green, size: 28)
+                  const Icon(Icons.check_circle, color: Colors.green, size: 28)
                 else
                   Icon(Icons.lock, color: Colors.grey[400], size: 28),
               ],
@@ -98,7 +98,7 @@ class RecipeCard extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor.withOpacity(0.5),
+                  color: Theme.of(context).cardColor.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.zero,
                 ),
                 child: Text(
@@ -139,10 +139,10 @@ class RecipeCard extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: rarityColor.withOpacity(0.1),
+                color: rarityColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.zero,
                 border: Border.all(
-                  color: rarityColor.withOpacity(0.3),
+                  color: rarityColor.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(

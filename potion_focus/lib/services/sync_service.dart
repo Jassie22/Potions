@@ -1,7 +1,7 @@
+import 'dart:developer' as dev;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:potion_focus/core/config/app_constants.dart';
 import 'package:potion_focus/data/local/database.dart';
 import 'package:potion_focus/data/local/isar_helpers.dart';
 import 'package:potion_focus/data/models/session_model.dart';
@@ -43,7 +43,7 @@ class SyncService {
       await _markAllSynced();
     } catch (e) {
       // Silent failure - retry on next sync
-      print('Sync error: $e');
+      dev.log('Sync error: $e');
     }
   }
 
@@ -73,7 +73,7 @@ class SyncService {
           await db.sessionModels.put(session);
         });
       } catch (e) {
-        print('Error syncing session: $e');
+        dev.log('Error syncing session: $e');
       }
     }
 
@@ -99,7 +99,7 @@ class SyncService {
           await db.potionModels.put(potion);
         });
       } catch (e) {
-        print('Error syncing potion: $e');
+        dev.log('Error syncing potion: $e');
       }
     }
 
@@ -125,7 +125,7 @@ class SyncService {
           'updated_at': DateTime.now().toIso8601String(),
         });
       } catch (e) {
-        print('Error syncing quest: $e');
+        dev.log('Error syncing quest: $e');
       }
     }
 
@@ -144,7 +144,7 @@ class SyncService {
           'updated_at': DateTime.now().toIso8601String(),
         });
       } catch (e) {
-        print('Error syncing user data: $e');
+        dev.log('Error syncing user data: $e');
       }
     }
   }
@@ -188,7 +188,7 @@ class SyncService {
         }
       }
     } catch (e) {
-      print('Error pulling sessions: $e');
+      dev.log('Error pulling sessions: $e');
     }
 
     // Pull potions
@@ -221,7 +221,7 @@ class SyncService {
         }
       }
     } catch (e) {
-      print('Error pulling potions: $e');
+      dev.log('Error pulling potions: $e');
     }
 
     // Pull user data (merge essence balances)
@@ -232,32 +232,30 @@ class SyncService {
           .eq('user_id', userId)
           .single();
 
-      if (remoteData != null) {
-        final allLocalData = await db.userDataModels.getAllItems();
-        final localData = allLocalData.firstOrNull;
+      final allLocalData = await db.userDataModels.getAllItems();
+      final localData = allLocalData.firstOrNull;
 
-        if (localData != null) {
-          // Use maximum of local and remote essence (safety net)
-          localData.essenceBalance = (remoteData['essence_balance'] as int)
-              .clamp(localData.essenceBalance, double.infinity)
-              .toInt();
+      if (localData != null) {
+        // Use maximum of local and remote essence (safety net)
+        localData.essenceBalance = (remoteData['essence_balance'] as int)
+            .clamp(localData.essenceBalance, double.infinity)
+            .toInt();
 
-          localData.totalFocusMinutes = remoteData['total_focus_minutes'] as int;
-          localData.totalPotions = remoteData['total_potions'] as int;
-          localData.streakDays = remoteData['streak_days'] as int;
+        localData.totalFocusMinutes = remoteData['total_focus_minutes'] as int;
+        localData.totalPotions = remoteData['total_potions'] as int;
+        localData.streakDays = remoteData['streak_days'] as int;
 
-          if (remoteData['last_focus_date'] != null) {
-            localData.lastFocusDate =
-                DateTime.parse(remoteData['last_focus_date'] as String);
-          }
-
-          await db.writeTxn(() async {
-            await db.userDataModels.put(localData);
-          });
+        if (remoteData['last_focus_date'] != null) {
+          localData.lastFocusDate =
+              DateTime.parse(remoteData['last_focus_date'] as String);
         }
+
+        await db.writeTxn(() async {
+          await db.userDataModels.put(localData);
+        });
       }
-    } catch (e) {
-      print('Error pulling user data: $e');
+        } catch (e) {
+      dev.log('Error pulling user data: $e');
     }
   }
 
@@ -278,7 +276,7 @@ class SyncService {
       final response = await _supabase.auth.signInAnonymously();
       return response.user != null;
     } catch (e) {
-      print('Error signing in: $e');
+      dev.log('Error signing in: $e');
       return false;
     }
   }
@@ -292,7 +290,7 @@ class SyncService {
       );
       return response.user != null;
     } catch (e) {
-      print('Error signing in: $e');
+      dev.log('Error signing in: $e');
       return false;
     }
   }
@@ -306,7 +304,7 @@ class SyncService {
       );
       return response.user != null;
     } catch (e) {
-      print('Error signing up: $e');
+      dev.log('Error signing up: $e');
       return false;
     }
   }

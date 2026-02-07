@@ -12,9 +12,7 @@ class TagStatsService {
       final allTags = await db.tagStatsModels.getAllItems();
       TagStatsModel? tagStats = allTags.where((t) => t.tag == tag).firstOrNull;
 
-      if (tagStats == null) {
-        tagStats = TagStatsModel(tag: tag);
-      }
+      tagStats ??= TagStatsModel(tag: tag);
 
       // Update totals
       tagStats.totalMinutes += durationMinutes;

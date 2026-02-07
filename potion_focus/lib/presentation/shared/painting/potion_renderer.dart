@@ -143,7 +143,7 @@ class _PixelBubblePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final pixelSize = size.width / 12;
     final paint = Paint()
-      ..color = color.withOpacity(0.4)
+      ..color = color.withValues(alpha: 0.4)
       ..style = PaintingStyle.fill
       ..isAntiAlias = false;
 

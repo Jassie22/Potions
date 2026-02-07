@@ -47,7 +47,7 @@ class QuestCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: _getQuestColor().withOpacity(0.2),
+                    color: _getQuestColor().withValues(alpha: 0.2),
                     borderRadius: BorderRadius.zero,
                   ),
                   child: Icon(
@@ -146,7 +146,7 @@ class QuestCard extends StatelessWidget {
                             curve: Curves.easeOutCubic,
                             width: constraints.maxWidth * progressPercentage,
                             height: 2,
-                            color: barColor.withOpacity(0.3),
+                            color: barColor.withValues(alpha: 0.3),
                           ),
                         ],
                       ),

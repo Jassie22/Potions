@@ -147,7 +147,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           borderRadius: BorderRadius.zero,
                         ),
                         side: BorderSide(
-                          color: AppColors.mysticalGold.withOpacity(0.6),
+                          color: AppColors.mysticalGold.withValues(alpha: 0.6),
                           width: 2,
                         ),
                       ),
@@ -176,8 +176,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          PotionRenderer(
-            config: const VisualConfig(
+          const PotionRenderer(
+            config: VisualConfig(
               bottleShape: 'bottle_round',
               liquid: 'liquid_0',
               effectType: 'effect_glow',
@@ -226,7 +226,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.black26,
-              border: Border.all(color: AppColors.mysticalGold.withOpacity(0.3), width: 2),
+              border: Border.all(color: AppColors.mysticalGold.withValues(alpha: 0.3), width: 2),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -278,7 +278,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.black26,
-              border: Border.all(color: AppColors.mysticalGold.withOpacity(0.3), width: 2),
+              border: Border.all(color: AppColors.mysticalGold.withValues(alpha: 0.3), width: 2),
             ),
             child: Wrap(
               spacing: 8,
@@ -368,8 +368,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           _buildStepIndicator(4),
           const SizedBox(height: 24),
           // Brewing potion animation
-          PotionRenderer(
-            config: const VisualConfig(
+          const PotionRenderer(
+            config: VisualConfig(
               bottleShape: 'bottle_potion',
               liquid: 'liquid_4',
               effectType: 'none',
@@ -411,11 +411,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Row of rarity potions
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               PotionRenderer(
-                config: const VisualConfig(
+                config: VisualConfig(
                   bottleShape: 'bottle_round',
                   liquid: 'liquid_9',
                   effectType: 'effect_sparkles',
@@ -425,9 +425,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 fillPercent: 1.0,
                 showGlow: true,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               PotionRenderer(
-                config: const VisualConfig(
+                config: VisualConfig(
                   bottleShape: 'bottle_potion',
                   liquid: 'liquid_14',
                   effectType: 'effect_smoke',
@@ -437,9 +437,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 fillPercent: 1.0,
                 showGlow: true,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               PotionRenderer(
-                config: const VisualConfig(
+                config: VisualConfig(
                   bottleShape: 'bottle_legendary',
                   liquid: 'liquid_18',
                   effectType: 'effect_legendary_glow',
@@ -473,8 +473,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.mysticalGold.withOpacity(0.15),
-              border: Border.all(color: AppColors.mysticalGold.withOpacity(0.4), width: 2),
+              color: AppColors.mysticalGold.withValues(alpha: 0.15),
+              border: Border.all(color: AppColors.mysticalGold.withValues(alpha: 0.4), width: 2),
             ),
             child: Text(
               'No guilt, no pressure.\nJust a quiet archive of effort.',
@@ -494,7 +494,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.primaryLight.withOpacity(0.3),
+        color: AppColors.primaryLight.withValues(alpha: 0.3),
         border: Border.all(color: AppColors.primaryLight, width: 2),
       ),
       child: Text(
@@ -532,7 +532,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: selected ? AppColors.secondaryLight.withOpacity(0.3) : Colors.transparent,
+        color: selected ? AppColors.secondaryLight.withValues(alpha: 0.3) : Colors.transparent,
         border: Border.all(
           color: selected ? AppColors.secondaryLight : Colors.white38,
           width: 2,
@@ -552,7 +552,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: selected ? AppColors.primaryLight.withOpacity(0.2) : Colors.transparent,
+        color: selected ? AppColors.primaryLight.withValues(alpha: 0.2) : Colors.transparent,
         border: Border.all(
           color: selected ? AppColors.primaryLight : Colors.white24,
           width: 2,

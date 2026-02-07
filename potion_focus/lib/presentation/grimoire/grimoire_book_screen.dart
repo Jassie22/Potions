@@ -90,7 +90,7 @@ class _GrimoireBookScreenState extends ConsumerState<GrimoireBookScreen> {
                       Text(
                         '${_currentPage.round() + 1} / $totalPages',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: const Color(0xFFF5E6C8).withOpacity(0.6),
+                              color: const Color(0xFFF5E6C8).withValues(alpha: 0.6),
                             ),
                       ),
                     ],
@@ -213,7 +213,7 @@ class _GrimoireBookScreenState extends ConsumerState<GrimoireBookScreen> {
     if (totalPages <= 1) return const SizedBox();
 
     // Limit displayed dots if too many pages
-    final maxDots = 12;
+    const maxDots = 12;
     final showDots = totalPages <= maxDots;
 
     if (!showDots) {
@@ -235,7 +235,7 @@ class _GrimoireBookScreenState extends ConsumerState<GrimoireBookScreen> {
             width: isActive ? 16 : 6,
             height: 6,
             decoration: BoxDecoration(
-              color: isActive ? dotColor : dotColor.withOpacity(0.3),
+              color: isActive ? dotColor : dotColor.withValues(alpha: 0.3),
               borderRadius: BorderRadius.zero,
             ),
           );
@@ -269,16 +269,16 @@ class _GrimoireBookScreenState extends ConsumerState<GrimoireBookScreen> {
           margin: const EdgeInsets.symmetric(horizontal: 4),
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: isActive ? color.withOpacity(0.3) : Colors.transparent,
+            color: isActive ? color.withValues(alpha: 0.3) : Colors.transparent,
             border: Border.all(
-              color: isActive ? color : color.withOpacity(0.3),
+              color: isActive ? color : color.withValues(alpha: 0.3),
               width: isActive ? 2 : 1,
             ),
           ),
           child: Text(
             '$count',
             style: TextStyle(
-              color: isActive ? color : color.withOpacity(0.5),
+              color: isActive ? color : color.withValues(alpha: 0.5),
               fontSize: 10,
               fontWeight: FontWeight.bold,
             ),

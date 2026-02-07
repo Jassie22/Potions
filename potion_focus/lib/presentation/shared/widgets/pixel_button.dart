@@ -129,7 +129,7 @@ class _PixelButtonOutlinedState extends State<PixelButtonOutlined> {
 
     // Pressed state shows a subtle fill
     final fillColor = _isPressed && !isDisabled
-        ? borderColor.withOpacity(0.1)
+        ? borderColor.withValues(alpha: 0.1)
         : Colors.transparent;
 
     return GestureDetector(
